@@ -1,4 +1,4 @@
-# Wordle Game
+# Wordle Game (Note that main = master, they are just different names of the same thing)
 
 A Wordle-style game developed collaboratively as a team project.
 
