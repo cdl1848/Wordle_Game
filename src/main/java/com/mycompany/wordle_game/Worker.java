@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.HashSet;
-//Test
+
 //make the class
 public class Worker {
 // create variables needed in multiple functions and lists too.
