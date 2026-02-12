@@ -1,13 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.wordle_game;
 
-/**
- *
- * @author dallas
- */
 public class Modes {
-    
+    Worker worker = new Worker();
+    Controller controller = new Controller();
+    int scoreone= 0;
+    int scoretwo= 0;
+
+public int getScoreOne(){
+    return scoreone;
+}
+
+public int getScoreTwo(){
+    return scoretwo;
+}
+
+private void setScoreOne(){
+    // updates score one for which mode its called for reads from or too file 
+}
+
+private void setScoreTwo(){
+    //updates socre two for wich mode its called for reads from  or too file 
+}
+
+
 }

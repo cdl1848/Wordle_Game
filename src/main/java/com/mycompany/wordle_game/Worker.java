@@ -4,20 +4,26 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.HashSet;
-//Test
-//make the class
-public class Worker {
-// create variables needed in multiple functions and lists too.
-private String[] wordList;
-private HashSet<String> allowedWords = new HashSet<>();
-private final Random rand = new Random();
 
-// Constructor - when its loaded the word list is loaded too
+public class Worker {
+    private int attempts = 0;
+    private String gameword;
+    private String[] wordList;
+    private HashSet<String> allowedWords = new HashSet<>();
+    private final Random rand = new Random();
+    public enum Color {
+        Green,
+        Yellow,
+        Red,
+    }
+    
+    // Constructor - when its loaded the word list is loaded too
     public Worker() {
         loadWordList();
         loadAllowedWords();
     }
-    // Creates the allowed word Hash set - used over array casue of how big it is 
+    
+// Creates the allowed word Hash set - used over array casue of how big it is 
   private void loadAllowedWords() {
     InputStream is = Worker.class
             .getClassLoader()
@@ -32,6 +38,7 @@ private final Random rand = new Random();
     }
     scanner.close();
 }
+
 // Loads the words that can be used as game words into an array so they can be grabbed at random.
     private void loadWordList() {
         InputStream is = Worker.class
@@ -54,6 +61,7 @@ private final Random rand = new Random();
         // Convert to array
         wordList = temp.toArray(new String[0]);
 }
+
 // Grabs a random word from the array to send to the game to use as the game word
     public String getGameWord() {
         String GameWord = wordList[rand.nextInt(wordList.length)];
@@ -76,23 +84,42 @@ private final Random rand = new Random();
         return guess;
     }
     
-    public void compare(String guess, String gameWord) {
+    public Color compare(String guess, String gameWord) {
+            attempts ++;
             for (int i = 0; i < guess.length(); i++) {
                 char g = guess.charAt(i);
                 char w = gameWord.charAt(i);
-            
                 if (g == w) {
-                    System.out.print((i + 1) + ",Green ");
+                    return Color.Green;
                 } else if (gameWord.indexOf(g) != -1) {
-                   System.out.print((i + 1) + ",Yellow ");
+                   return Color.Yellow;
                 } else {
-                    System.out.print((i + 1) + ",Red ");
+                    return Color.Red;
                 }
-            
         }
-        System.out.println();
+            return Color.Red;
     }
     
+    public int getAttempts(){
+        return attempts;
+    }
+    
+    public void startNewRound(){
+        attempts = 0;
+        gameword = getGameWord();
+             
+    }
+    public boolean isValidGuess(String guess){
+                    if (allowedWords.contains(guess)){
+                return true;
+            }
+         return false;
+    }
+    
+    
+    
+   
+ /*
     public void GameRun(Scanner input){
          String gameWord = getGameWord(); // Run Worker to get random word 
          System.out.println(gameWord); // TESTER PRINT
@@ -110,4 +137,5 @@ private final Random rand = new Random();
         // Lose / finish signal
         System.out.println("Game word was: " + gameWord);
     }
+*/
 }
