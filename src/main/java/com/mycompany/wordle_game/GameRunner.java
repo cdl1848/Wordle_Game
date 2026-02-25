@@ -18,7 +18,7 @@ public class GameRunner {
             // ---------- HOME SCREEN ----------
             if (controller.currentState == Controller.State.End) {
 
-                printHome(mode.getScoreOne()); // print total score
+                printHome(mode.getTotalScore()); // print total score
 
                 String choice = input.nextLine().trim().toUpperCase();
 
@@ -37,14 +37,20 @@ public class GameRunner {
                 System.out.println("(TEST word): " + gameWord);
 
                 while (controller.currentState == Controller.State.Play) {
-
-                    if (worker.getAttempts() >= 6) {
+                    
+                    if (worker.getAttempts() >= 6 && mode.getLives() <= 1){
+                        System.out.println (" out of lives out of time");
+                                controller.endMode();
+                                mode.resetLives();
+                                break;
+                    }
+                    else if (worker.getAttempts() >= 6) {
                         System.out.println("Out of attempts!");
-                        controller.endMode();
+                        mode.loseLife();
+                        worker.startNewRound();
                         break;
                     }
-
-                    System.out.print("Enter guess (or G to go home): ");
+                    System.out.print("Enter guess (or G to go home): " + mode.getLives());
                     String guess = input.nextLine().trim().toLowerCase();
 
                     if (guess.equalsIgnoreCase("G")) {

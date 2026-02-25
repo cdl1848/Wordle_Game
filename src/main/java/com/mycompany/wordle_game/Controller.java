@@ -6,21 +6,27 @@ package com.mycompany.wordle_game;
 
 /**
  *
- * @author dallas
+ * Contructs Controller Class that contains Game states in the from of enum State
  */
 public class Controller {
-
+// java doc comments must answer what is it? and how does it do it? 
     public enum State {
         Play,
         End
     }
 
     public State currentState;
-
+/** 
+ * Changes Game State Into End, 
+ */
     public void endMode() {
         currentState = State.End;
     }
+/** 
+ * Changes Game State Into Play, 
+ */
     public void playGame() {
         currentState = State.Play; 
     }
 }
+

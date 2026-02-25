@@ -17,13 +17,17 @@ public class Worker {
         Red,
     }
     
-    // Constructor - when its loaded the word list is loaded too
+    /**
+     * Contructs the Worker Class, contains a call to Load words and Load allowed words
+     */
     public Worker() {
         loadWordList();
         loadAllowedWords();
     }
     
-// Creates the allowed word Hash set - used over array casue of how big it is 
+/**
+ * Loads the allowed word list from a file into a hashSet called allowed Words
+ */
   private void loadAllowedWords() {
     InputStream is = Worker.class
             .getClassLoader()
@@ -39,7 +43,9 @@ public class Worker {
     scanner.close();
 }
 
-// Loads the words that can be used as game words into an array so they can be grabbed at random.
+/**
+ * Loads the Game word list from a file into a Array called WordList, Array is used so grabing one at random is done easily
+ */
     private void loadWordList() {
         InputStream is = Worker.class
                 .getClassLoader()
@@ -62,7 +68,10 @@ public class Worker {
         wordList = temp.toArray(new String[0]);
 }
 
-// Grabs a random word from the array to send to the game to use as the game word
+/**
+ * Takes a random word from wordList using random.nextInt
+ * @return String GameWord
+ */
     public String getGameWord() {
         String GameWord = wordList[rand.nextInt(wordList.length)];
         return GameWord;
@@ -83,7 +92,12 @@ public class Worker {
         }
         return guess;
     }
-    
+/**
+ * Compares the user input to the Game word, If it is correct returns the enum value Green, if letter is in the word returns enum yellow, if not in word at all returns enum red
+ * @param guess
+ * @param gameWord
+ * @return enum Color
+ */
     public Color compare(String guess, String gameWord) {
             attempts ++;
             for (int i = 0; i < guess.length(); i++) {
@@ -99,16 +113,27 @@ public class Worker {
         }
             return Color.Red;
     }
-    
+/**
+ * gets the attemps 
+ * @return int attempts
+ */
     public int getAttempts(){
         return attempts;
     }
     
+/**
+ * resets values such as attempts and gets a new random word
+ */
     public void startNewRound(){
         attempts = 0;
         gameword = getGameWord();
              
     }
+/**
+ * compares user input to allowedWords to check if word is not gibrish
+ * @param guess
+ * @return boolean
+ */
     public boolean isValidGuess(String guess){
                     if (allowedWords.contains(guess)){
                 return true;

@@ -11,7 +11,10 @@ public class ModeOne extends Modes {
         this.controller = controller;
     }
    
-  
+  /** 
+   * Calculates Score for Mode One, and returns it as an int
+   * @param attempt
+   */
     private int calculateScore(int attempt) {
         switch(attempt) {
             case 1: return 100 * multiply;
@@ -22,7 +25,11 @@ public class ModeOne extends Modes {
             case 6: return 10 * multiply;
             default: return 0;
         }
-    } // Calculates Score for Mode one based on attempts
+    }
+    /**
+     * Updates the Multiplier for the Score to calculate
+     * @param attempt 
+     */
     private void updateMultiplier(int attempt) {
         switch(attempt) {
             case 1:
@@ -37,7 +44,12 @@ public class ModeOne extends Modes {
                 multiply = 1;
     }
 } //calculates the multiplier based on attempts
-    
+public int getTotalScore(){
+        return totalscore;
+    }
+/**
+ * Updates values such as attempt, score, total score, and lives. If lives equals 0 then runs endmode switching the state to END ending the game
+ */
     public void runMode(){
         int attempt = worker.getAttempts();
         int score = calculateScore(attempt);
@@ -51,4 +63,13 @@ public class ModeOne extends Modes {
         }
         
     }  //updates stuff in the game
+    public int getLives(){
+        return lives;
+    }
+    public void loseLife() {
+        lives--;
+    }
+    public void resetLives() {
+        lives = 3;
+    }
 }
