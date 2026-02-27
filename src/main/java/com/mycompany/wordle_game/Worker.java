@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.HashSet;
-
+/** 
+ * Creates the game words, manupluates inputs 
+ * @author dallas
+ */
 public class Worker {
     private int attempts = 0;
     private String gameword;

@@ -5,7 +5,10 @@ public class ModeOne extends Modes {
     private int multiply = 1;
     protected int totalscore = 0;
     private Worker worker; 
-    
+/**
+ * Constructer for mode one creates pointers to worker and controller
+ * @param worker 
+ */
    public ModeOne(Worker worker) {
         this.worker = worker;
         this.controller = controller;
@@ -63,13 +66,22 @@ public int getTotalScore(){
         }
         
     }  //updates stuff in the game
-
+/**
+ * returns lives for modeone
+ * @return 
+ */
     public int getLives(){
         return lives;
     }
+    /**
+     * Updates lives for modeone 
+     */
     public void loseLife() {
         lives--;
     }
+    /** 
+     * resets lives back to 3 for modeone 
+     */
     public void resetLives() {
         lives = 3;
     }
