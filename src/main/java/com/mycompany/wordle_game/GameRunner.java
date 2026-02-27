@@ -1,3 +1,4 @@
+/*
 package com.mycompany.wordle_game;
 
 import java.util.Scanner;
@@ -101,3 +102,4 @@ public class GameRunner {
         System.out.println("=======================\n");
     }
 }
+*/

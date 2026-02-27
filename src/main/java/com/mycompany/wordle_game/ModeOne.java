@@ -6,7 +6,7 @@ public class ModeOne extends Modes {
     protected int totalscore = 0;
     private Worker worker; 
     
-   public ModeOne(Worker worker , Controller controller) {
+   public ModeOne(Worker worker) {
         this.worker = worker;
         this.controller = controller;
     }
@@ -63,6 +63,7 @@ public int getTotalScore(){
         }
         
     }  //updates stuff in the game
+
     public int getLives(){
         return lives;
     }
