@@ -17,7 +17,7 @@ public class Worker {
     public enum Color {
         Green,
         Yellow,
-        Red,
+        Gray,
     }
     
     /**
@@ -32,6 +32,7 @@ public class Worker {
  * Loads the allowed word list from a file into a hashSet called allowed Words
  */
   private void loadAllowedWords() {
+    System.out.println("Loading AllowedWords.txt...");
     InputStream is = Worker.class
             .getClassLoader()
             .getResourceAsStream("AllowedWords.txt");
@@ -75,11 +76,7 @@ public class Worker {
  * Takes a random word from wordList using random.nextInt
  * @return String GameWord
  */
-    public String getGameWord() {
-        String GameWord = wordList[rand.nextInt(wordList.length)];
-        return GameWord;
-    }
-    
+    /*
     public String UserInput(Scanner input){
         String guess; 
         while (true){
@@ -95,27 +92,49 @@ public class Worker {
         }
         return guess;
     }
+    */
 /**
  * Compares the user input to the Game word, If it is correct returns the enum value Green, if letter is in the word returns enum yellow, if not in word at all returns enum red
  * @param guess
  * @param gameWord
  * @return enum Color
  */
-    public Color compare(String guess, String gameWord) {
-            attempts ++;
-            for (int i = 0; i < guess.length(); i++) {
-                char g = guess.charAt(i);
-                char w = gameWord.charAt(i);
-                if (g == w) {
-                    return Color.Green;
-                } else if (gameWord.indexOf(g) != -1) {
-                   return Color.Yellow;
-                } else {
-                    return Color.Red;
-                }
+    public Color[] compare(String guess, String word){
+        int length = 5;
+        Color[] result = new Color[5];
+        boolean[] used = new boolean[5];
+        
+        for (int i = 0; i < 5 ; i++) {
+            if (guess.charAt(i) == word.charAt(i)) {
+            result[i] = Color.Green;
+            used[i] = true;
         }
-            return Color.Red;
+        }
+        for (int i = 0; i < length; i++) {
+
+        if (result[i] == Color.Green)
+            continue;
+
+        char g = guess.charAt(i);
+        boolean found = false;
+
+        for (int j = 0; j < length; j++) {
+
+            if (!used[j] && g == word.charAt(j)) {
+
+                found = true;
+                used[j] = true;
+                break;
+            }
+        }
+
+        result[i] = found ? Color.Yellow : Color.Gray;
     }
+
+    attempts++;
+
+    return result;
+}
 /**
  * gets the attemps 
  * @return int attempts
@@ -129,8 +148,11 @@ public class Worker {
  */
     public void startNewRound(){
         attempts = 0;
-        gameword = getGameWord();
+        gameword = wordList[rand.nextInt(wordList.length)];
              
+    }
+    public String getGameWord() {
+        return gameword;
     }
 /**
  * compares user input to allowedWords to check if word is not gibrish
@@ -144,6 +166,14 @@ public class Worker {
          return false;
     }
     
+    public boolean allGreen(Color[] result) {
+        for (Color c : result){
+            if (c != Color.Green){
+                return false;
+            }
+        }
+        return true;
+    }
     
     
    

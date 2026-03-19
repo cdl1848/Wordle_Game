@@ -1,4 +1,3 @@
-/*
 package com.mycompany.wordle_game;
 
 import java.util.Scanner;
@@ -7,99 +6,88 @@ public class GameRunner {
 
     public static void main(String[] args) {
 
+        System.out.println("GameRunner started");
+
         Controller controller = new Controller();
-        Worker worker = new Worker();
-        ModeOne mode = new ModeOne(worker, controller); // your multiplier & scoring
         Scanner input = new Scanner(System.in);
 
-        controller.endMode(); // start at HOME
+        controller.endMode();
 
         while (true) {
 
-            // ---------- HOME SCREEN ----------
-            if (controller.currentState == Controller.State.End) {
+            // HOME
+            if (controller.getState() == Controller.State.End) {
 
-                printHome(mode.getTotalScore()); // print total score
+                System.out.println("\n=================");
+                System.out.println("WORDLE");
+                System.out.println("=================");
+                System.out.println("Total Score: " + controller.getTotalScore());
+                System.out.println("Press P to Play");
+                System.out.println("=================");
 
                 String choice = input.nextLine().trim().toUpperCase();
 
                 if (choice.equals("P")) {
-                    worker.startNewRound();
-                    controller.playGame();
+                    controller.startGame();
                 }
             }
 
-            // ---------- GAME SCREEN ----------
-            else if (controller.currentState == Controller.State.Play) {
+            // GAME
+            else if (controller.getState() == Controller.State.Play) {
 
-                printGame();
+                System.out.println("\n--- NEW ROUND ---");
+                System.out.println("Word (debug): " + controller.debugWord());
 
-                String gameWord = worker.getGameWord();
-                System.out.println("(TEST word): " + gameWord);
+                while (controller.getState() == Controller.State.Play) {
 
-                while (controller.currentState == Controller.State.Play) {
-                    
-                    if (worker.getAttempts() >= 6 && mode.getLives() <= 1){
-                        System.out.println (" out of lives out of time");
-                                controller.endMode();
-                                mode.resetLives();
-                                break;
-                    }
-                    else if (worker.getAttempts() >= 6) {
-                        System.out.println("Out of attempts!");
-                        mode.loseLife();
-                        worker.startNewRound();
-                        break;
-                    }
-                    System.out.print("Enter guess (or G to go home): " + mode.getLives());
-                    String guess = input.nextLine().trim().toLowerCase();
+                    System.out.println(
+                        "\nLives: " + controller.getLives() +
+                        " | Score: " + controller.getTotalScore() +
+                        " | Attempt: " + (controller.getAttempts() + 1)
+                    );
 
-                    if (guess.equalsIgnoreCase("G")) {
-                        controller.endMode();
-                        break;
-                    }
+                    System.out.print("Enter guess: ");
+                    String guess = input.nextLine();
 
-                    if (!worker.isValidGuess(guess)) {
-                        System.out.println("Not a valid word.");
+                    Worker.Color[] result = controller.submitGuess(guess);
+
+                    if (result == null) {
+                        System.out.println("Invalid word.");
                         continue;
                     }
 
-                    Worker.Color result = worker.compare(guess, gameWord);
-                    System.out.println("Result: " + result);
+                    // print colors
+                    for (Worker.Color c : result) {
+                        System.out.print(c + " ");
+                    }
+                    System.out.println();
 
-                    // WIN → continue playing with multiplier
-                    if (result == Worker.Color.Green) {
+                    // status messages
+                    switch (controller.currentStatus) {
 
-                        System.out.println("Correct!");
-                        mode.runMode(); // updates multiplier and totalscore
+                        case WIN:
+                            System.out.println("Correct! New round starting.");
+                            System.out.println("New Word: " + controller.debugWord());
+                            break;
 
-                        // start next round automatically
-                        worker.startNewRound();
-                        gameWord = worker.getGameWord();
+                        case ROUND_LOST:
+                            System.out.println("Round lost! Life lost.");
+                            System.out.println("New Word: " + controller.debugWord());
+                            break;
 
-                        System.out.println("\n--- NEXT ROUND ---");
-                        System.out.println("(TEST word): " + gameWord);
+                        case GAME_OVER:
+                            System.out.println("Out of lives! Returning to home.");
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (controller.getState() == Controller.State.End) {
+                        break;
                     }
                 }
             }
         }
     }
-
-    // ---------- ASCII UI ----------
-
-    private static void printHome(int totalScore) {
-        System.out.println("\n=======================");
-        System.out.println("       WORDLE");
-        System.out.println("=======================");
-        System.out.println("Total Score: " + totalScore);
-        System.out.println("Type P to Play");
-        System.out.println("=======================\n");
-    }
-
-    private static void printGame() {
-        System.out.println("\n=======================");
-        System.out.println("       GAME MODE");
-        System.out.println("=======================\n");
-    }
 }
-*/

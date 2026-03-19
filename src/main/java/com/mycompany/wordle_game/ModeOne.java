@@ -1,10 +1,14 @@
 package com.mycompany.wordle_game;
-
+/** 
+ * the scoreing system and manipulator for mode one, caculates socres and handles lives
+ * @author dallas
+ */
 public class ModeOne extends Modes {
     private int lives = 3;
     private int multiply = 1;
     protected int totalscore = 0;
     private Worker worker; 
+    private Controller controller;
 /**
  * Constructer for mode one creates pointers to worker and controller
  * @param worker 

@@ -5,7 +5,6 @@ package com.mycompany.wordle_game;
  */
 public class Modes {
     Worker worker = new Worker();
-    Controller controller = new Controller();
     int scoreone= 0;
     int scoretwo= 0;
 
