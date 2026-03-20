@@ -56,7 +56,7 @@ public class Controller {
         gameWord = worker.getGameWord();
     }
     
-    public Worker.Color[] submitGuess(String guess){
+    public Worker.Color[] submitGuessModeOne(String guess){
 
     guess = guess.trim().toLowerCase();
 

@@ -49,7 +49,7 @@ public class GameRunner {
                     System.out.print("Enter guess: ");
                     String guess = input.nextLine();
 
-                    Worker.Color[] result = controller.submitGuess(guess);
+                    Worker.Color[] result = controller.submitGuessModeOne(guess);
 
                     if (result == null) {
                         System.out.println("Invalid word.");
