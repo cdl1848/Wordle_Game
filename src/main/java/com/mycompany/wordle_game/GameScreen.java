@@ -1,9 +1,10 @@
 package com.mycompany.wordle_game;
 
 /**
- * Sources used for text formatting:
- * https://stackoverflow.com/a/26670258
- * https://stackoverflow.com/a/5238524
+ * GameScreen
+ * 
+ * Represents the main gameplay view
+ * Acts as a container for all visual components used during gameplay
  * 
  * @author garrett
  */
@@ -12,7 +13,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class GameUI extends Application {
+public class GameScreen extends Application {
     
     @Override
     public void start(Stage primaryStage) {
