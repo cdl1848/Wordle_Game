@@ -85,7 +85,7 @@ public class Controller {
         if (mode.getLives() <= 1) {
 
             currentStatus = Status.GAME_OVER;
-
+            
             endMode();
             mode.resetLives();
 
