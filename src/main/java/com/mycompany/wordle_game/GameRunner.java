@@ -8,11 +8,12 @@ public class GameRunner {
 
         System.out.println("GameRunner started");
 
+
         Controller controller = new Controller();
         Scanner input = new Scanner(System.in);
-
+        Worker worker = new Worker();
+        ModeTwo modetwo = new ModeTwo(worker);
         controller.endMode();
-
         while (true) {
 
             // HOME
