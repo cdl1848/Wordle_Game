@@ -3,7 +3,7 @@ package com.mycompany.wordle_game;
  * Class for ModeThree - will handle scores and value updating
  * @author dallas
  */
-public class ModeThree extends Modes {
+public class ModeThree{
     private int time = 0;
     private int totalscore = 0;
     private Worker worker; 

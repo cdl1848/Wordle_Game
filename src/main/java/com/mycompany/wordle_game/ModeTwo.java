@@ -6,7 +6,7 @@ import java.util.TimerTask;
  * Class for ModeTwo - will handle scores, timer, and value updating
  * @author dallas
  */
-public class ModeTwo extends Modes {
+public class ModeTwo {
     private int timeout = 0;
     private int totalscore = 0;
     private Worker worker; 

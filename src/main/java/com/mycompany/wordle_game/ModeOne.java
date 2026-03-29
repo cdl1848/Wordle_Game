@@ -3,7 +3,7 @@ package com.mycompany.wordle_game;
  * The scoring system and manipulator for mode one, calculates scores, handles lives, and tracks attempts.
  * @author dallas
  */
-public class ModeOne extends Modes {
+public class ModeOne {
     private int lives = 3;
     private int multiply = 1;
     protected int totalscore = 0;

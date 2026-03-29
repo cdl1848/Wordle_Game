@@ -17,7 +17,7 @@ public class GameScreen extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        GameBoard board = new GameBoard();
+        TESTMAIN board = new TESTMAIN();
 
         Scene scene = new Scene(board, 350, 400);
         

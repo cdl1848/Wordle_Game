@@ -25,7 +25,7 @@ import javafx.scene.layout.GridPane;
  *
  * @author garrett
  */
-public class GameBoard extends GridPane {
+public class TESTMAIN extends GridPane {
 
     // 6x5 2D array of text field objects used to move between fields
     private TextField[][] grid = new TextField[6][5];
@@ -57,7 +57,7 @@ public class GameBoard extends GridPane {
         }
     }
 
-    public GameBoard() {
+    public TESTMAIN() {
 
         // Set spacing between grids
         setHgap(5);

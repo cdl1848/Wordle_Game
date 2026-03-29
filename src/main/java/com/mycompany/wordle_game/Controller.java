@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class Controller {
     Worker worker = new Worker();
     ModeOne mode = new ModeOne(worker);
+    PersistenceManager PerMan = new PersistenceManager();
     //Scanner input = new Scanner(System.in);
     //TurnResult turnresult = new TurnResult();
     private String gameWord;
@@ -52,6 +53,7 @@ public class Controller {
     }
     public void startGame() { 
         worker.startNewRound();
+        mode.resetscore();
         playGame();
         gameWord = worker.getGameWord();
     }
