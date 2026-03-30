@@ -2,17 +2,18 @@ package com.mycompany.wordle_game;
 
 import java.util.Scanner;
 
-public class GameRunner {
+public class TESTMAIN {
 
     public static void main(String[] args) {
 
         System.out.println("GameRunner started");
 
+
         Controller controller = new Controller();
         Scanner input = new Scanner(System.in);
-
+        Worker worker = new Worker();
+        ModeTwo modetwo = new ModeTwo(worker);
         controller.endMode();
-
         while (true) {
 
             // HOME

@@ -96,7 +96,7 @@ public class Worker {
 /**
  * Compares the user input to the Game word, If it is correct returns the enum value Green, if letter is in the word returns enum yellow, if not in word at all returns enum red
  * @param guess
- * @param gameWord
+ * @param word
  * @return enum Color
  */
     public Color[] compare(String guess, String word){

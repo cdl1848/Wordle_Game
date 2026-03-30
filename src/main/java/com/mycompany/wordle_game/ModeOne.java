@@ -1,16 +1,16 @@
 package com.mycompany.wordle_game;
 /** 
- * the scoreing system and manipulator for mode one, caculates socres and handles lives
+ * The scoring system and manipulator for mode one, calculates scores, handles lives, and tracks attempts.
  * @author dallas
  */
-public class ModeOne extends Modes {
+public class ModeOne {
     private int lives = 3;
     private int multiply = 1;
     protected int totalscore = 0;
     private Worker worker; 
     private Controller controller;
 /**
- * Constructer for mode one creates pointers to worker and controller
+ * Makes a pointer for worker and controller when created.
  * @param worker 
  */
    public ModeOne(Worker worker) {
@@ -19,8 +19,9 @@ public class ModeOne extends Modes {
     }
    
   /** 
-   * Calculates Score for Mode One, and returns it as an int
+   * Calculates Score for Mode One starting at 100 points for attempt one down to 10 points for attempt 6. Multiplies the scores by the multiplier determined by number of attempts of the last game.
    * @param attempt
+   * @return int
    */
     private int calculateScore(int attempt) {
         switch(attempt) {
@@ -34,7 +35,7 @@ public class ModeOne extends Modes {
         }
     }
     /**
-     * Updates the Multiplier for the Score to calculate
+     * Updates the Multiplier based on number of attempts, for 1 and 2 the multiplier is 3. 3 and 4 multiplier is 2, anything else multiplier is 1.
      * @param attempt 
      */
     private void updateMultiplier(int attempt) {
@@ -51,6 +52,9 @@ public class ModeOne extends Modes {
                 multiply = 1;
     }
 } //calculates the multiplier based on attempts
+/**
+ * @return totalscore
+ */
 public int getTotalScore(){
         return totalscore;
     }
@@ -70,15 +74,15 @@ public int getTotalScore(){
         }
         
     }  //updates stuff in the game
-/**
- * returns lives for modeone
- * @return 
+
+/** 
+ * @return lives
  */
     public int getLives(){
         return lives;
     }
     /**
-     * Updates lives for modeone 
+     * Updates lives for modeone, removes one life. 
      */
     public void loseLife() {
         lives--;
@@ -88,5 +92,8 @@ public int getTotalScore(){
      */
     public void resetLives() {
         lives = 3;
+    }
+    public void resetscore(){
+      totalscore = 0;
     }
 }
