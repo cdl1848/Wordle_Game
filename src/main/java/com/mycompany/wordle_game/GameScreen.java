@@ -1,5 +1,8 @@
 package com.mycompany.wordle_game;
 
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 /**
  * GameScreen
  * 
@@ -8,18 +11,16 @@ package com.mycompany.wordle_game;
  * 
  * @author garrett
  */
-
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
 public class GameScreen {
     
     public void show(Stage stage) {
         Controller controller = new Controller();
         controller.startGame();
         
+        // Used for debugging purposes
+        System.out.println(controller.debugWord());
+        
         GameBoard board = new GameBoard(controller);
-
         Scene scene = new Scene(board, 350, 400);
         
         stage.setScene(scene);

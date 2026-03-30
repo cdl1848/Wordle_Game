@@ -22,9 +22,11 @@ public class GameBoard extends GridPane {
     // 6x5 2D array of text field objects used to move between fields
     private TextField[][] grid = new TextField[6][5];
 
+    // Stores user input as a concatenated string
     private String userInput = "";
 
-    String color;
+    // Stores a hex value for different colors
+    private String color;
 
     /**
      * Helper method that moves right of current field when letter is entered
@@ -120,8 +122,11 @@ public class GameBoard extends GridPane {
 
                             // Check for invalid input
                             if (colors != null) {
-                                // Set color CSS color based on enum value
                                 for (int i = 0; i <= currentCol; i++) {
+                                    // Disable the text fields in the row
+                                    grid[currentRow][i].setDisable(true);
+                                    
+                                    // Set CSS color based on enum value
                                     switch (colors[i]) {
                                         case Green:
                                             color = "#6ca965";
@@ -136,19 +141,35 @@ public class GameBoard extends GridPane {
                                             color = "#ffffff";
                                     }
 
-                                    // Update the text fields background color and text color
+                                    // Update each text fields background color and text color
                                     grid[currentRow][i].setStyle("-fx-background-color: " + color + "; -fx-text-fill: #ffffff");
-
-                                    // Disable the text fields in the row
-                                    grid[currentRow][i].setDisable(true);
                                 }
 
-                                // Enable the next row
-                                if (currentRow < 5) {
-                                    grid[currentRow + 1][0].setDisable(false);
+                                // Get status of Controller after user input is submitted
+                                Controller.Status status = controller.currentStatus;
+                                
+                                // Used for debugging
+                                System.out.println("Status: " + status);
+
+                                // Update GameBoard base on Controller status
+                                switch (status) {
+                                    case WIN:
+                                        System.out.println("You win!"); // Will change to a popup
+                                        break;
+                                        
+                                    case ROUND_LOST:
+                                        System.out.println("Round Lost!");
+                                        break;
+                                        
+                                    case CONTINUE:
+                                        // Enable the next row
+                                        if (currentRow < 5) {
+                                            grid[currentRow + 1][0].setDisable(false);
+                                        }
+                                        break;
                                 }
                             } else {
-
+                                System.out.println("Invalid guess");
                             }
                         }
                     }

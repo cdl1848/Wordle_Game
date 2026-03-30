@@ -7,7 +7,7 @@ package com.mycompany.wordle_game;
 import java.util.Scanner;
 
 /**
- * Constructs Controller Class that contains Game states in the from of enum
+ * Constructs Controller Class that contains Game states in the form of enum
  * State
  */
 public class Controller {
