@@ -25,7 +25,7 @@ public class HomePage extends Application {
         playButton.setPrefSize(120, 40);
 
         playButton.setOnAction(e -> {
-            TESTMAIN board = new TESTMAIN();
+            GameBoard board = new GameBoard();
             Scene gameScene = new Scene(board, 350, 400);
 
             primaryStage.setScene(gameScene);

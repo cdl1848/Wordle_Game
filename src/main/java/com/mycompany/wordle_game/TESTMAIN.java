@@ -1,151 +1,94 @@
 package com.mycompany.wordle_game;
 
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.GridPane;
+import java.util.Scanner;
 
-/**
- * GameBoard
- *
- * Responsible for managing the grid of text fields which represents the
- * playable word grid (6 rows x 5 columns)
- *
- * Sources used for text formatting: 
- * https://stackoverflow.com/a/26670258
- * https://stackoverflow.com/a/5238524
- *
- * @author garrett
- */
-/**
- * TODO: 
- * - Disable tab to next grid 
- * - Process user input 
- * - Only accept input when row is full 
- * - Don't let user move to next row without making guess
- *
- * @author garrett
- */
-public class TESTMAIN extends GridPane {
+public class TESTMAIN {
 
-    // 6x5 2D array of text field objects used to move between fields
-    private TextField[][] grid = new TextField[6][5];
+    public static void main(String[] args) {
 
-    private String userInput = "";
+        System.out.println("GameRunner started");
 
-    /**
-     * Helper method that moves right of current field when letter is entered
-     *
-     * @param row
-     * @param col
-     */
-    private void moveForward(int row, int col) {
-        // Do not move forward if on the last column in row
-        if (col < 5) {
-            grid[row][col + 1].requestFocus();
-        }
-    }
 
-    /**
-     * Helper method that moves left of current field when letter is deleted
-     *
-     * @param row
-     * @param col
-     */
-    private void moveBackward(int row, int col) {
-        if (col > 0) {
-            grid[row][col - 1].requestFocus();
-        }
-    }
+        Controller controller = new Controller();
+        Scanner input = new Scanner(System.in);
+        Worker worker = new Worker();
+        ModeTwo modetwo = new ModeTwo(worker);
+        controller.endMode();
+        while (true) {
 
-    public TESTMAIN() {
+            // HOME
+            if (controller.getState() == Controller.State.End) {
 
-        // Set spacing between grids
-        setHgap(5);
-        setVgap(5);
+                System.out.println("\n=================");
+                System.out.println("WORDLE");
+                System.out.println("=================");
+                System.out.println("Total Score: " + controller.getTotalScore());
+                System.out.println("Press P to Play");
+                System.out.println("=================");
 
-        for (int row = 0; row < 6; row++) {
-            for (int col = 0; col < 5; col++) {
-                TextField textField = new TextField();
+                String choice = input.nextLine().trim().toUpperCase();
 
-                // Make text field into a square
-                textField.setPrefSize(50, 50);
-                textField.setMinSize(50, 50);
-                textField.setMaxSize(50, 50);
+                if (choice.equals("P")) {
+                    controller.startGame();
+                }
+            }
 
-                // Center text
-                textField.setStyle("-fx-alignment: center; -fx-font-size: 18");
+            // GAME
+            else if (controller.getState() == Controller.State.Play) {
 
-                // Variables used for listener to move forward and backward
-                final int currentRow = row;
-                final int currentCol = col;
+                System.out.println("\n--- NEW ROUND ---");
+                System.out.println("Word (debug): " + controller.debugWord());
 
-                // Prevent from moving to next grid until letter is entered and
-                // to next row if guess has not been entered
-                textField.setDisable(true);
+                while (controller.getState() == Controller.State.Play) {
 
-                // Listener that allows 1 letter max per field and handles 
-                // forward movement between fields
-                textField.textProperty().addListener(
-                        (observable, oldValue, newValue) -> {
-                            // Checks for 0 or 1 occurence of a character
-                            if (!newValue.matches("[a-zA-Z]?")) {
-                                textField.setText(oldValue);
-                            } else {
-                                textField.setText(newValue.toUpperCase());
-                            }
+                    System.out.println(
+                        "\nLives: " + controller.getLives() +
+                        " | Score: " + controller.getTotalScore() +
+                        " | Attempt: " + (controller.getAttempts() + 1)
+                    );
 
-                            // If a letter was entered, move forward
-                            if (newValue.length() == 1) {
-                                // Only move forward if not at the end of a row
-                                if (currentCol + 1 < 5) {
-                                    grid[currentRow][currentCol + 1].setDisable(false);
-                                    moveForward(currentRow, currentCol);
-                                }
-                            }
-                        }
-                );
+                    System.out.print("Enter guess: ");
+                    String guess = input.nextLine();
 
-                
-                // Handle backspace and enter key press
-                textField.setOnKeyPressed(event -> {
-                    // Move backwards from current field if backspace key is pressed
-                    if (event.getCode() == KeyCode.BACK_SPACE) {
-                        if (textField.getText().isEmpty()) {
-                            moveBackward(currentRow, currentCol);
-                        }
+                    Worker.Color[] result = controller.submitGuessModeOne(guess);
+
+                    if (result == null) {
+                        System.out.println("Invalid word.");
+                        continue;
                     }
 
-                    // Process the user input if enter is pressed at the last column in a row
-                    if (currentCol == 4) {
-                        if (event.getCode() == KeyCode.ENTER) {
-                            for (int i = 0; i <= currentCol; i++) {
-                                userInput += grid[currentRow][i].getText();
-                                grid[currentRow][i].setDisable(true);
-                            }
-
-                            grid[currentRow + 1][0].setDisable(false);
-                            
-                            // Change this so userInput is sent to the controller
-                            System.out.println(userInput);
-                            userInput = "";
-                        }
+                    // print colors
+                    for (Worker.Color c : result) {
+                        System.out.print(c + " ");
                     }
-                });
+                    System.out.println();
 
-                // Stores in memory
-                grid[row][col] = textField;
+                    // status messages
+                    switch (controller.currentStatus) {
 
-                // Adds to FX GridPane to appear on screen
-                add(textField, col, row);
+                        case WIN:
+                            System.out.println("Correct! New round starting.");
+                            System.out.println("New Word: " + controller.debugWord());
+                            break;
+
+                        case ROUND_LOST:
+                            System.out.println("Round lost! Life lost.");
+                            System.out.println("New Word: " + controller.debugWord());
+                            break;
+
+                        case GAME_OVER:
+                            System.out.println("Out of lives! Returning to home.");
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (controller.getState() == Controller.State.End) {
+                        break;
+                    }
+                }
             }
         }
-
-        // Once a letter is entered into the text field, the subsequent field
-        // in the current row will be enabled
-        grid[0][0].setDisable(false);
-    }
-
-    public TextField[][] getGrid() {
-        return grid;
     }
 }
