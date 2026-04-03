@@ -20,16 +20,13 @@ public class HomePage extends Application {
         Text title = new Text("WORDLE");
         title.setFont(Font.font(36));
 
-        // Play button function to our gameBoard
+        // Play button function to our GameScreen
         Button playButton = new Button("Play");
         playButton.setPrefSize(120, 40);
 
         playButton.setOnAction(e -> {
-            GameBoard board = new GameBoard();
-            Scene gameScene = new Scene(board, 350, 400);
-
-            primaryStage.setScene(gameScene);
-            primaryStage.setTitle("Wordle"); //This is cool we can change the route name of the gameboard here
+            GameScreen gameScreen = new GameScreen();
+            gameScreen.show(primaryStage);
         });
 
         VBox layout = new VBox(30);

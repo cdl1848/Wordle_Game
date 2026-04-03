@@ -1,28 +1,29 @@
 package com.mycompany.wordle_game;
 
-/**
- * GameScreen
- * 
- * Represents the main gameplay view
- * Acts as a container for all visual components used during gameplay
- * 
- * @author garrett
- */
-
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class GameScreen extends Application {
+/**
+ * GameScreen
+ * 
+ * Represents the main game play view
+ * Acts as a container for all visual components used during game play
+ * 
+ * @author garrett
+ */
+public class GameScreen {
     
-    @Override
-    public void start(Stage primaryStage) {
-        GameBoard board = new GameBoard();
-
+    public void show(Stage stage) {
+        Controller controller = new Controller();
+        controller.startGame();
+        
+        // Used for debugging purposes
+        System.out.println(controller.debugWord());
+        
+        GameBoard board = new GameBoard(controller);
         Scene scene = new Scene(board, 350, 400);
         
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Wordle");
-        primaryStage.show();
+        stage.setScene(scene);
+        stage.setTitle("Wordle");
     }
 }
