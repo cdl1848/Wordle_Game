@@ -10,18 +10,10 @@ import javafx.scene.layout.GridPane;
  * Responsible for managing the grid of text fields which represents the
  * playable word grid (6 rows x 5 columns)
  *
- * Sources used for text formatting: 
- * https://stackoverflow.com/a/26670258
+ * Sources used for text formatting: https://stackoverflow.com/a/26670258
  * https://stackoverflow.com/a/5238524
  *
- * @author garrett
- */
-/**
- * TODO: 
- * - Disable tab to next grid 
- * - Process user input 
- * - Only accept input when row is full 
- * - Don't let user move to next row without making guess
+ * Color hex values taken from: https://www.color-hex.com/color-palette/1012607
  *
  * @author garrett
  */
@@ -30,7 +22,11 @@ public class GameBoard extends GridPane {
     // 6x5 2D array of text field objects used to move between fields
     private TextField[][] grid = new TextField[6][5];
 
+    // Stores user input as a concatenated string
     private String userInput = "";
+
+    // Stores a hex value for different colors
+    private String color;
 
     /**
      * Helper method that moves right of current field when letter is entered
@@ -39,8 +35,8 @@ public class GameBoard extends GridPane {
      * @param col
      */
     private void moveForward(int row, int col) {
-        // Do not move forward if on the last column in row
-        if (col < 5) {
+        // Do not move forward if on the last column in a row
+        if (col < 4) {
             grid[row][col + 1].requestFocus();
         }
     }
@@ -57,8 +53,7 @@ public class GameBoard extends GridPane {
         }
     }
 
-    public GameBoard() {
-
+    public GameBoard(Controller controller) {
         // Set spacing between grids
         setHgap(5);
         setVgap(5);
@@ -72,7 +67,7 @@ public class GameBoard extends GridPane {
                 textField.setMinSize(50, 50);
                 textField.setMaxSize(50, 50);
 
-                // Center text
+                // Center text and set font for each text field
                 textField.setStyle("-fx-alignment: center; -fx-font-size: 18");
 
                 // Variables used for listener to move forward and backward
@@ -105,7 +100,6 @@ public class GameBoard extends GridPane {
                         }
                 );
 
-                
                 // Handle backspace and enter key press
                 textField.setOnKeyPressed(event -> {
                     // Move backwards from current field if backspace key is pressed
@@ -120,14 +114,63 @@ public class GameBoard extends GridPane {
                         if (event.getCode() == KeyCode.ENTER) {
                             for (int i = 0; i <= currentCol; i++) {
                                 userInput += grid[currentRow][i].getText();
-                                grid[currentRow][i].setDisable(true);
                             }
 
-                            grid[currentRow + 1][0].setDisable(false);
-                            
-                            // Change this so userInput is sent to the controller
-                            System.out.println(userInput);
+                            // User input is sent to Controller, which returns an array of color enums
+                            Worker.Color[] colors = controller.submitGuessModeOne(userInput);
                             userInput = "";
+
+                            // Check for invalid input
+                            if (colors != null) {
+                                for (int i = 0; i <= currentCol; i++) {
+                                    // Disable the text fields in the row
+                                    grid[currentRow][i].setDisable(true);
+                                    
+                                    // Set CSS color based on enum value
+                                    switch (colors[i]) {
+                                        case Green:
+                                            color = "#6ca965";
+                                            break;
+                                        case Yellow:
+                                            color = "#c8b653";
+                                            break;
+                                        case Gray:
+                                            color = "#787c7f";
+                                            break;
+                                        default:
+                                            color = "#ffffff";
+                                    }
+
+                                    // Update each text fields background color and text color
+                                    grid[currentRow][i].setStyle("-fx-background-color: " + color + "; -fx-text-fill: #ffffff");
+                                }
+
+                                // Get status of Controller after user input is submitted
+                                Controller.Status status = controller.currentStatus;
+                                
+                                // Used for debugging
+                                System.out.println("Status: " + status);
+
+                                // Update GameBoard base on Controller status
+                                switch (status) {
+                                    case WIN:
+                                        System.out.println("You win!"); // Will change to a popup
+                                        break;
+                                        
+                                    case ROUND_LOST:
+                                        System.out.println("Round Lost!");
+                                        break;
+                                        
+                                    case CONTINUE:
+                                        // Enable the next row
+                                        if (currentRow < 5) {
+                                            grid[currentRow + 1][0].setDisable(false);
+                                        }
+                                        break;
+                                }
+                            } else {
+                                System.out.println("Invalid guess");
+                            }
                         }
                     }
                 });

@@ -1,55 +1,63 @@
 package com.mycompany.wordle_game;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.HashSet;
-/** 
- * Creates the game words, manupluates inputs 
+
+/**
+ * Creates the game words, manipulates inputs
+ *
  * @author dallas
  */
 public class Worker {
+
     private int attempts = 0;
     private String gameword;
     private String[] wordList;
     private HashSet<String> allowedWords = new HashSet<>();
     private final Random rand = new Random();
+
     public enum Color {
         Green,
         Yellow,
         Gray,
     }
-    
+
     /**
-     * Contructs the Worker Class, contains a call to Load words and Load allowed words
+     * Constructs the Worker Class, contains a call to Load words and Load
+     * allowed words
      */
     public Worker() {
         loadWordList();
         loadAllowedWords();
     }
-    
-/**
- * Loads the allowed word list from a file into a hashSet called allowed Words
- */
-  private void loadAllowedWords() {
-    System.out.println("Loading AllowedWords.txt...");
-    InputStream is = Worker.class
-            .getClassLoader()
-            .getResourceAsStream("AllowedWords.txt");
 
-    if (is == null) {
-        throw new RuntimeException("AllowedWords.txt not found");
-    }
-    Scanner scanner = new Scanner(is);
-    while (scanner.hasNextLine()) {
-        allowedWords.add(scanner.nextLine().trim().toLowerCase());
-    }
-    scanner.close();
-}
+    /**
+     * Loads the allowed word list from a file into a hashSet called allowed
+     * Words
+     */
+    private void loadAllowedWords() {
+        System.out.println("Loading AllowedWords.txt...");
+        InputStream is = Worker.class
+                .getClassLoader()
+                .getResourceAsStream("AllowedWords.txt");
 
-/**
- * Loads the Game word list from a file into a Array called WordList, Array is used so grabing one at random is done easily
- */
+        if (is == null) {
+            throw new RuntimeException("AllowedWords.txt not found");
+        }
+        Scanner scanner = new Scanner(is);
+        while (scanner.hasNextLine()) {
+            allowedWords.add(scanner.nextLine().trim().toLowerCase());
+        }
+        scanner.close();
+    }
+
+    /**
+     * Loads the Game word list from a file into a Array called WordList, Array
+     * is used so grabbing one at random is done easily
+     */
     private void loadWordList() {
         InputStream is = Worker.class
                 .getClassLoader()
@@ -70,12 +78,13 @@ public class Worker {
 
         // Convert to array
         wordList = temp.toArray(new String[0]);
-}
+    }
 
-/**
- * Takes a random word from wordList using random.nextInt
- * @return String GameWord
- */
+    /**
+     * Takes a random word from wordList using random.nextInt
+     *
+     * @return String GameWord
+     */
     /*
     public String UserInput(Scanner input){
         String guess; 
@@ -92,92 +101,100 @@ public class Worker {
         }
         return guess;
     }
-    */
-/**
- * Compares the user input to the Game word, If it is correct returns the enum value Green, if letter is in the word returns enum yellow, if not in word at all returns enum red
- * @param guess
- * @param word
- * @return enum Color
- */
-    public Color[] compare(String guess, String word){
+     */
+    /**
+     * Compares the user input to the Game word, If it is correct returns the
+     * enum value Green, if letter is in the word returns enum yellow, if not in
+     * word at all returns enum red
+     *
+     * @param guess
+     * @param gameWord
+     * @return enum Color
+     */
+    public Color[] compare(String guess) {
+        String word = gameword;
         int length = 5;
         Color[] result = new Color[5];
         boolean[] used = new boolean[5];
-        
-        for (int i = 0; i < 5 ; i++) {
+
+        for (int i = 0; i < 5; i++) {
             if (guess.charAt(i) == word.charAt(i)) {
-            result[i] = Color.Green;
-            used[i] = true;
-        }
+                result[i] = Color.Green;
+                used[i] = true;
+            }
         }
         for (int i = 0; i < length; i++) {
 
-        if (result[i] == Color.Green)
-            continue;
-
-        char g = guess.charAt(i);
-        boolean found = false;
-
-        for (int j = 0; j < length; j++) {
-
-            if (!used[j] && g == word.charAt(j)) {
-
-                found = true;
-                used[j] = true;
-                break;
+            if (result[i] == Color.Green) {
+                continue;
             }
+
+            char g = guess.charAt(i);
+            boolean found = false;
+
+            for (int j = 0; j < length; j++) {
+
+                if (!used[j] && g == word.charAt(j)) {
+
+                    found = true;
+                    used[j] = true;
+                    break;
+                }
+            }
+
+            result[i] = found ? Color.Yellow : Color.Gray;
         }
 
-        result[i] = found ? Color.Yellow : Color.Gray;
+        attempts++;
+
+        return result;
     }
 
-    attempts++;
-
-    return result;
-}
-/**
- * gets the attemps 
- * @return int attempts
- */
-    public int getAttempts(){
+    /**
+     * gets the attempts
+     *
+     * @return int attempts
+     */
+    public int getAttempts() {
         return attempts;
     }
-    
-/**
- * resets values such as attempts and gets a new random word
- */
-    public void startNewRound(){
+
+    /**
+     * resets values such as attempts and gets a new random word
+     */
+    public void startNewRound() {
         attempts = 0;
         gameword = wordList[rand.nextInt(wordList.length)];
-             
+
     }
+
     public String getGameWord() {
         return gameword;
     }
-/**
- * compares user input to allowedWords to check if word is not gibrish
- * @param guess
- * @return boolean
- */
-    public boolean isValidGuess(String guess){
-                    if (allowedWords.contains(guess)){
-                return true;
-            }
-         return false;
+
+    /**
+     * compares user input to allowedWords to check if word is not gibrish
+     *
+     * @param guess
+     * @return boolean
+     */
+    public boolean isValidGuess(String guess) {
+        if (allowedWords.contains(guess)) {
+            return true;
+        }
+        return false;
     }
-    
+
     public boolean allGreen(Color[] result) {
-        for (Color c : result){
-            if (c != Color.Green){
+        for (Color c : result) {
+            if (c != Color.Green) {
                 return false;
             }
         }
         return true;
     }
-    
-    
-   
- /*
+
+    /*
     public void GameRun(Scanner input){
          String gameWord = getGameWord(); // Run Worker to get random word 
          System.out.println(gameWord); // TESTER PRINT
@@ -195,5 +212,5 @@ public class Worker {
         // Lose / finish signal
         System.out.println("Game word was: " + gameWord);
     }
-*/
+     */
 }
