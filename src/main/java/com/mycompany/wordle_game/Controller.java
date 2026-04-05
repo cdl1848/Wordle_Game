@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Controller {
 
     Worker worker = new Worker();
-    ModeOne mode = new ModeOne(worker);
+    ModeOne modeOne = new ModeOne(worker);
     PersistenceManager PerMan = new PersistenceManager();
     //Scanner input = new Scanner(System.in);
     //TurnResult turnresult = new TurnResult();
@@ -52,7 +52,7 @@ public class Controller {
     }
 
     public int getTotalScore() {
-        return mode.getTotalScore();
+        return modeOne.getTotalScore();
     }
 
     public State getState() {
@@ -61,7 +61,7 @@ public class Controller {
 
     public void startGame() {
         worker.startNewRound();
-        mode.resetscore();
+        modeOne.resetscore();
         playGame();
     }
 
@@ -81,7 +81,7 @@ public class Controller {
 
             currentStatus = Status.WIN;
 
-            mode.runMode();
+            modeOne.runMode();
             worker.startNewRound();
 
             return result;
@@ -90,18 +90,19 @@ public class Controller {
         // ROUND LOST
         if (worker.getAttempts() >= 6) {
 
-            if (mode.getLives() <= 1) {
+            if (modeOne.getLives() <= 1) {
 
                 currentStatus = Status.GAME_OVER;
 
                 endMode();
-                mode.resetLives();
+                PerMan.updateModeOneScore(getTotalScore());
+                modeOne.resetLives();
 
             } else {
 
                 currentStatus = Status.ROUND_LOST;
 
-                mode.loseLife();
+                modeOne.loseLife();
                 worker.startNewRound();
             }
 
@@ -113,7 +114,7 @@ public class Controller {
     }
 
     public int getLives() {
-        return mode.getLives();
+        return modeOne.getLives();
     }
 
     public int getAttempts() {
