@@ -1,8 +1,12 @@
 package com.mycompany.wordle_game;
 
+import javafx.animation.RotateTransition;
+import javafx.animation.SequentialTransition;
+import javafx.geometry.Point3D;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 
 /**
  * GameBoard
@@ -10,10 +14,19 @@ import javafx.scene.layout.GridPane;
  * Responsible for managing the grid of text fields which represents the
  * playable word grid (6 rows x 5 columns)
  *
- * Sources used for text formatting: https://stackoverflow.com/a/26670258
+ * Sources used for text formatting: 
+ * https://stackoverflow.com/a/26670258
  * https://stackoverflow.com/a/5238524
  *
- * Color hex values taken from: https://www.color-hex.com/color-palette/1012607
+ * Sources used for animation:
+ * https://www.tutorialspoint.com/javafx/javafx_rotate_transition.htm
+ * https://www.javaspring.net/javafx/javafx_sequential_transition_unleashing_the_power_of_animated_interfaces/
+ *
+ * Color hex values taken from: 
+ * https://www.color-hex.com/color-palette/1012607
+ *
+ * Help with general purpose debugging and refactoring:
+ * https://chatgpt.com/c/697d09b0-0438-832a-8cce-d80990487f4d
  *
  * @author garrett
  */
@@ -25,12 +38,8 @@ public class GameBoard extends GridPane {
     // Stores user input as a concatenated string
     private String userInput = "";
 
-    // Stores a hex value for different colors
-    private String color;
-
     /**
      * Helper method that moves right of current field when letter is entered
-     *
      * @param row
      * @param col
      */
@@ -43,13 +52,90 @@ public class GameBoard extends GridPane {
 
     /**
      * Helper method that moves left of current field when letter is deleted
-     *
      * @param row
      * @param col
      */
     private void moveBackward(int row, int col) {
         if (col > 0) {
             grid[row][col - 1].requestFocus();
+        }
+    }
+
+    /**
+     * Helper method that will play tile flipping animation and change respective 
+     * color for each tile in the current row
+     * @param row
+     * @param colors 
+     */
+    private void playRowAnimation(int row, Worker.Color[] colors) {
+        // Stores the flip animations for each tile in a row
+        SequentialTransition rowAnimation = new SequentialTransition();
+
+        // Create a flip animation for each tile in the row
+        for (int i = 0; i < 5; i++) {
+            TextField tile = grid[row][i];
+
+            SequentialTransition tileFlip = createTileFlip(tile, colors[i]);
+
+            // Disable tile after animation finishes
+            tileFlip.setOnFinished(event -> tile.setDisable(true));
+
+            rowAnimation.getChildren().add(tileFlip);
+        }
+
+        rowAnimation.play();
+    }
+
+    /**
+     * Helper method that creates a tile flip animation for each tile in a row and changes its color
+     * corresponding to its respective color enum value
+     * @param tile
+     * @param colorEnum
+     * @return 
+     */
+    private SequentialTransition createTileFlip(TextField tile, Worker.Color colorEnum) {
+        // Split the flip animation into two
+        // Color will change at the halfway point when the tile is no longer visible
+        RotateTransition flip = new RotateTransition();
+        flip.setNode(tile);
+        flip.setDuration(Duration.millis(200));
+        flip.setAxis(new Point3D(1, 0, 0));
+        flip.setFromAngle(0);
+        flip.setToAngle(90);
+
+        // Apply color at halfway point
+        flip.setOnFinished(event -> {
+            tile.setStyle("-fx-background-color: " + getColorHex(colorEnum) + "; -fx-text-fill: #ffffff");
+        });
+
+        RotateTransition flipBack = new RotateTransition();
+        flipBack.setNode(tile);
+        flipBack.setDuration(Duration.millis(200));
+        flipBack.setAxis(new Point3D(1, 0, 0));
+        flipBack.setFromAngle(90);
+        flipBack.setToAngle(0);
+
+        // Chain the two flip animations together
+        SequentialTransition tileFlip = new SequentialTransition(flip, flipBack);
+        
+        return tileFlip;
+    }
+    
+    /**
+     * Helper method that will return a color hex value given color enum
+     * @param color
+     * @return 
+     */
+    private String getColorHex(Worker.Color color) {
+        switch (color) {
+            case Green:
+                return "#6ca965";
+            case Yellow:
+                return "#c8b653";
+            case Gray:
+                return "#787c7f";
+            default:
+                return "#ffffff";
         }
     }
 
@@ -120,34 +206,14 @@ public class GameBoard extends GridPane {
                             Worker.Color[] colors = controller.submitGuessModeOne(userInput);
                             userInput = "";
 
-                            // Check for invalid input
+                            // If the input is valid, apply color change to row and check status from Controller
                             if (colors != null) {
-                                for (int i = 0; i <= currentCol; i++) {
-                                    // Disable the text fields in the row
-                                    grid[currentRow][i].setDisable(true);
-                                    
-                                    // Set CSS color based on enum value
-                                    switch (colors[i]) {
-                                        case Green:
-                                            color = "#6ca965";
-                                            break;
-                                        case Yellow:
-                                            color = "#c8b653";
-                                            break;
-                                        case Gray:
-                                            color = "#787c7f";
-                                            break;
-                                        default:
-                                            color = "#ffffff";
-                                    }
-
-                                    // Update each text fields background color and text color
-                                    grid[currentRow][i].setStyle("-fx-background-color: " + color + "; -fx-text-fill: #ffffff");
-                                }
-
+                                playRowAnimation(currentRow, colors);
+                                
+                                // NEED TO CHANGE STATUS HANDLING
                                 // Get status of Controller after user input is submitted
                                 Controller.Status status = controller.currentStatus;
-                                
+
                                 // Used for debugging
                                 System.out.println("Status: " + status);
 
@@ -156,11 +222,11 @@ public class GameBoard extends GridPane {
                                     case WIN:
                                         System.out.println("You win!"); // Will change to a popup
                                         break;
-                                        
+
                                     case ROUND_LOST:
                                         System.out.println("Round Lost!");
                                         break;
-                                        
+
                                     case CONTINUE:
                                         // Enable the next row
                                         if (currentRow < 5) {
@@ -190,5 +256,5 @@ public class GameBoard extends GridPane {
 
     public TextField[][] getGrid() {
         return grid;
-    }
+    }                                
 }
