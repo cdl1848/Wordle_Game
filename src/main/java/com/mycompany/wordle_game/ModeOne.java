@@ -132,4 +132,33 @@ public class ModeOne {
     public void resetScore() {
         totalScore = 0;
     }
+    /**
+ * Processes the result of a completed guess and updates score, lives,
+ * and round progression for Mode One.
+ *
+ * @param result the Color array returned by worker for the most recent guess.
+ * @return the resulting game status for the round.
+ */
+public Controller.Status processResult(Worker.Color[] result) {
+
+    if (worker.allGreen(result)) {
+        runMode();
+        worker.startNewRound();
+        return Controller.Status.WIN;
+    }
+
+    if (worker.getAttempts() >= MAX_ATTEMPTS) {
+        if (lives <= 1) {
+            controller.endMode();
+            return Controller.Status.GAME_OVER;
+        } else {
+            loseLife();
+            worker.startNewRound();
+            return Controller.Status.ROUND_LOST;
+        }
+    }
+
+    return Controller.Status.CONTINUE;
+}
+
 }

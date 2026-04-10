@@ -1,117 +1,151 @@
 package com.mycompany.wordle_game;
 
-import java.util.Scanner;
+import java.util.Random;
 
+/**
+ * Stress tests the Controller class using only valid five-letter guesses.
+ * Mode Two is intentionally excluded.
+ */
 public class TESTMAIN {
 
+    private static final Random RANDOM = new Random();
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+    private static final int WORD_LENGTH = 5;
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        System.out.println("===== CONTROLLER STRESS TEST STARTED =====\n");
 
         Controller controller = new Controller();
-        Worker worker = new Worker();
-        PersistenceManager pm = new PersistenceManager();
 
-        ModeTwo modeTwo = new ModeTwo(worker, controller, pm);
-        // Assuming ModeThree exists based on your snippet
-        // ModeThree modeThree = new ModeThree(worker, controller, pm); 
+        stressModeOne(controller);
+        stressModeThree(controller);
+        rapidFireTest(controller);
+        stateTransitionTest(controller);
 
-        System.out.println("=== WORDLE TERMINAL ===");
-        System.out.println("1 - Mode One (Survival)");
-        System.out.println("2 - Mode Two (60s Blitz)");
-        System.out.println("3 - Mode Three (Classic)");
-        System.out.print("Select Mode: ");
-
-        int mode = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        switch (mode) {
-            case 1:
-                controller.startGame();
-                while (controller.getState() == Controller.State.Play) {
-                    System.out.print("Guess: ");
-                    String guess = scanner.nextLine();
-                    Worker.Color[] result = controller.submitGuessModeOne(guess);
-
-                    if (result == null) continue;
-
-                    printResult(result);
-                    System.out.println("Status: " + controller.currentStatus +
-                                       " | Score: " + controller.getTotalScore() +
-                                       " | Lives: " + controller.getLives());
-
-                    if (controller.currentStatus == Controller.Status.GAME_OVER) break;
-                }
-                break;
-
-            case 2:
-                // 1. RESET scores before starting
-                modeTwo.reset(); 
-                System.out.println("\n[MODE 2 STARTED - 60 SECONDS ON THE CLOCK]");
-                
-                // 2. START THE TIMER
-                modeTwo.modeTwoTimer(); 
-
-                while (!modeTwo.isTimedOut()) {
-                    System.out.print("Guess: ");
-                    
-                    // The program waits here. If the timer ends while you type, 
-                    // you must hit Enter one last time to trigger the exit.
-                    String guess = scanner.nextLine();
-
-                    // 3. IMMEDIATELY CHECK IF TIME EXPIRED
-                    if (modeTwo.isTimedOut()) {
-                        break; 
-                    }
-
-                    worker.startNewRound(); // Generate a new target word
-                    Worker.Color[] result = worker.compare(guess);
-                    modeTwo.updateScores(result);
-
-                    printResult(result);
-                    System.out.println("Wins: " + modeTwo.getWins() + " | Attempts: " + worker.getAttempts());
-                }
-
-                System.out.println("\n[!!!] TIME EXPIRED [!!!]");
-                System.out.println("Final Results -> Wins: " + modeTwo.getWins() + " | Losses: " + modeTwo.getLosses());
-                break;
-
-            case 3:
-                System.out.println("\nMODE 3 STARTED");
-                while (true) {
-                    worker.startNewRound();
-                    System.out.println("\nNew word started!");
-                    
-                    boolean wordSolved = false;
-                    while (worker.getAttempts() < 6 && !wordSolved) {
-                        System.out.print("Guess (or 'exit'): ");
-                        String guess = scanner.nextLine();
-                        if (guess.equalsIgnoreCase("exit")) return;
-
-                        Worker.Color[] result = worker.compare(guess);
-                        printResult(result);
-
-                        if (worker.allGreen(result)) {
-                            pm.recordWin();
-                            System.out.println("CORRECT!");
-                            wordSolved = true;
-                        } else if (worker.getAttempts() >= 6) {
-                            pm.recordLoss();
-                            System.out.println("OUT OF ATTEMPTS.");
-                        }
-                    }
-                    System.out.println("Total Wins: " + pm.getModeThreeWins());
-                }
-        }
-        scanner.close();
-        System.exit(0); // Forces the Timer thread to shut down
+        System.out.println("\n===== CONTROLLER STRESS TEST COMPLETED =====");
     }
 
-    // Helper method to keep the main code clean
-    private static void printResult(Worker.Color[] result) {
-        System.out.print("Result: [ ");
-        for (Worker.Color c : result) {
-            System.out.print(c + " ");
+    /**
+     * Generates a random five-letter lowercase word.
+     */
+    private static String randomFiveLetterWord() {
+        StringBuilder sb = new StringBuilder(WORD_LENGTH);
+        for (int i = 0; i < WORD_LENGTH; i++) {
+            sb.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
         }
-        System.out.println("]");
+        return sb.toString();
+    }
+
+    /**
+     * Converts a color array into a readable string.
+     */
+    private static String colorArrayToString(Worker.Color[] colors) {
+        if (colors == null) return "INVALID";
+        StringBuilder sb = new StringBuilder();
+        for (Worker.Color c : colors) {
+            sb.append(c).append(" ");
+        }
+        return sb.toString().trim();
+    }
+
+    /**
+     * Stress test for Mode One.
+     * Simulates repeated full game sessions.
+     */
+    private static void stressModeOne(Controller controller) {
+        System.out.println("---- Stress Testing Mode One ----");
+
+        controller.startModeOne();
+        int iterations = 5000;
+
+        for (int i = 0; i < iterations; i++) {
+            String guess = randomFiveLetterWord();
+            Worker.Color[] result = controller.submitGuess(guess);
+
+            if (controller.currentStatus == Controller.Status.GAME_OVER) {
+                System.out.println("GAME OVER at iteration: " + i);
+                System.out.println("Final Score: " + controller.getTotalScore());
+                controller.startModeOne();
+            }
+
+            if (i % 1000 == 0 && i != 0) {
+                System.out.println("Mode One Progress: " + i + " guesses processed.");
+            }
+        }
+
+        System.out.println("Mode One stress test completed.\n");
+    }
+
+    /**
+     * Stress test for Mode Three.
+     * Simulates continuous infinite gameplay.
+     */
+    private static void stressModeThree(Controller controller) {
+        System.out.println("---- Stress Testing Mode Three ----");
+
+        controller.startModeThree();
+        int iterations = 8000;
+
+        for (int i = 0; i < iterations; i++) {
+            String guess = randomFiveLetterWord();
+            controller.submitGuess(guess);
+
+            if (controller.currentStatus == Controller.Status.WIN ||
+                controller.currentStatus == Controller.Status.ROUND_LOST) {
+
+                if (i % 500 == 0) {
+                    System.out.println(
+                        "Round Completed at iteration " + i +
+                        " | Wins: " + controller.getModeThreeWins() +
+                        " | Losses: " + controller.getModeThreeLosses()
+                    );
+                }
+            }
+        }
+
+        System.out.println("Mode Three stress test completed.\n");
+    }
+
+    /**
+     * Rapid-fire test to evaluate performance under heavy load.
+     */
+    private static void rapidFireTest(Controller controller) {
+        System.out.println("---- Rapid Fire Performance Test ----");
+
+        controller.startModeThree();
+        int iterations = 20000;
+
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < iterations; i++) {
+            controller.submitGuess(randomFiveLetterWord());
+        }
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        System.out.println(iterations + " guesses processed in " + duration + " ms");
+        System.out.printf("Average Time per Guess: %.5f ms%n",
+                (double) duration / iterations);
+
+        System.out.println("Rapid fire test completed.\n");
+    }
+
+    /**
+     * Tests correctness of state transitions.
+     */
+    private static void stateTransitionTest(Controller controller) {
+        System.out.println("---- Testing State Transitions ----");
+
+        controller.startModeOne();
+        assert controller.getState() == Controller.State.Play : "Mode One failed to start.";
+
+        controller.endMode();
+        assert controller.getState() == Controller.State.End : "End mode failed.";
+
+        controller.startModeThree();
+        assert controller.getState() == Controller.State.Play : "Mode Three failed to start.";
+
+        System.out.println("State transition test completed.\n");
     }
 }

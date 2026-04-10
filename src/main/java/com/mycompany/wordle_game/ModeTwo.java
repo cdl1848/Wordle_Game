@@ -108,4 +108,33 @@ public class ModeTwo {
             timer.cancel();
         }
     }
+    /**
+ * Processes the result of a completed guess and updates win/loss counts
+ * and round progression for Mode Two.
+ *
+ * @param result the Color array returned by worker for the most recent guess.
+ * @return the resulting game status for the round.
+ */
+public Controller.Status processResult(Worker.Color[] result) {
+
+    if (isTimedOut()) {
+        controller.endMode();
+        return Controller.Status.GAME_OVER;
+    }
+
+    updateScores(result);
+
+    if (worker.allGreen(result)) {
+        worker.startNewRound();
+        return Controller.Status.WIN;
+    }
+
+    if (worker.getAttempts() >= MAX_ATTEMPTS) {
+        worker.startNewRound();
+        return Controller.Status.ROUND_LOST;
+    }
+
+    return Controller.Status.CONTINUE;
+}
+
 }
