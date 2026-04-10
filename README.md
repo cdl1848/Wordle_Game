@@ -18,6 +18,7 @@ Direct pushes to `master` are restricted.
 ```bash
 git clone <repository-url>
 cd <project>
+git checkout master
 ```
 
 ---
