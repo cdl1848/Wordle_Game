@@ -23,7 +23,7 @@ public class GameScreen {
 
     public void show(Stage stage) {
         controller = new Controller();
-        controller.startModeOne();
+        controller.startGame();
 
         // Used for debugging purposes
         System.out.println(controller.debugWord());
