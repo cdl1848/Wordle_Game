@@ -49,16 +49,6 @@ public class ModeThree {
      *
      * @param result the Color array returned by worker for the most recent guess.
      */
-    public void processResult(Worker.Color[] result) {
-        if (worker.allGreen(result)) {
-            perMan.recordWin();
-            worker.startNewRound();
-        } 
-        else if (worker.getAttempts() >= MAX_ATTEMPTS) {
-            perMan.recordLoss();
-            worker.startNewRound();
-        }
-    }
 
     /**
      * @return the total number of wins persisted across sessions
@@ -73,4 +63,30 @@ public class ModeThree {
     public int getLosses() {
         return perMan.getModeThreeLosses();
     }
+    /**
+ * Processes the result of a completed guess and updates persistent win/loss counts.
+ * If all letters are green a win is recorded.
+ * If attempts have reached 6 without a win a loss is recorded.
+ * A new round begins immediately after either outcome.
+ *
+ * @param result the Color array returned by worker for the most recent guess.
+ * @return the resulting game status for the round.
+ */
+    public Controller.Status processResult(Worker.Color[] result) {
+
+    if (worker.allGreen(result)) {
+        perMan.recordWin();
+        worker.startNewRound();
+        return Controller.Status.WIN;
+    }
+
+    if (worker.getAttempts() >= MAX_ATTEMPTS) {
+        perMan.recordLoss();
+        worker.startNewRound();
+        return Controller.Status.ROUND_LOST;
+    }
+
+    return Controller.Status.CONTINUE;
+}
+
 }

@@ -1,24 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.wordle_game;
-
 
 /**
  * Central coordinator for the Wordle game, managing game state, turn processing, and delegation to mode-specific logic.
- * The controller owns the shared worker to ModeOne and the PersistenceManager
+ * The controller owns the shared worker to ModeOne, ModeTwo, ModeThree, and the PersistenceManager.
  * All UI CODE should interact with the game through this class exclusively.
- * 
  */
 public class Controller {
 
     private final Worker worker = new Worker();
-    private final ModeOne modeOne = new ModeOne(worker, this);
     private final PersistenceManager perMan = new PersistenceManager();
-    //Scanner input = new Scanner(System.in);
-    //TurnResult turnresult = new TurnResult();
-    
+    private final ModeOne modeOne = new ModeOne(worker, this);
+    private final ModeTwo modeTwo = new ModeTwo(worker, this, perMan);
+    private final ModeThree modeThree = new ModeThree(worker, this, perMan);
+
     /**
      * Represents the high-level session state of the game.
      */
@@ -26,6 +20,7 @@ public class Controller {
         Play,
         End
     }
+
     /**
      * Represents the outcome of the most recently submitted guess.
      */
@@ -36,8 +31,19 @@ public class Controller {
         ROUND_LOST,
         GAME_OVER
     }
+
+    /**
+     * Represents the currently active game mode.
+     */
+    public enum GameMode {
+        MODE_ONE,
+        MODE_TWO,
+        MODE_THREE
+    }
+
     public State currentState;
     public Status currentStatus;
+    private GameMode currentMode;
 
     /**
      * Constructs a controller with the game initially in the End State.
@@ -54,96 +60,142 @@ public class Controller {
     }
 
     /**
-     * Changes Game State Into Play,
+     * Changes Game State Into Play.
      */
     public void playGame() {
         currentState = State.Play;
     }
+
     /**
-     * @return total score as reported by
+     * Starts a new Mode 1 game session. Resets the score, lives, and starts the first round via worker.
+     */
+    public void startModeOne() {
+        currentMode = GameMode.MODE_ONE;
+        worker.startNewRound();
+        modeOne.resetScore();
+        modeOne.resetLives();
+        playGame();
+    }
+
+    /**
+     * Starts a new Mode 2 game session. Resets session data, starts the timer, and begins the first round.
+     */
+    public void startModeTwo() {
+        currentMode = GameMode.MODE_TWO;
+        worker.startNewRound();
+        modeTwo.reset();
+        modeTwo.modeTwoTimer();
+        playGame();
+    }
+
+    /**
+     * Starts a new Mode 3 game session. Begins the first round and changes state to play.
+     */
+    public void startModeThree() {
+        currentMode = GameMode.MODE_THREE;
+        modeThree.startMode();
+        playGame();
+    }
+
+    /**
+     * Processes a single guess for the active game mode.
+     * The following logic is applied in order:
+     *  Guess is trimmed and lowercased.
+     *  If the guess is not in allowed word status is set to invalid and null is returned.
+     *  The guess is compared against the game word via worker.
+     *  Mode-specific logic determines scoring, round progression, and game termination.
+     *
+     * @param guess the string entered by the player
+     * @return Color array describing the result of the guess, or {@code null} if the guess was invalid.
+     */
+    public Worker.Color[] submitGuess(String guess) {
+
+    guess = guess.trim().toLowerCase();
+
+    if (!worker.isValidGuess(guess)) {
+        currentStatus = Status.INVALID;
+        return null;
+    }
+
+    Worker.Color[] result = worker.compare(guess);
+
+    switch (currentMode) {
+        case MODE_ONE:
+            currentStatus = modeOne.processResult(result);
+            if (currentStatus == Status.GAME_OVER) {
+                perMan.updateModeOneScore(modeOne.getTotalScore());
+                modeOne.resetLives();
+            }
+            break;
+        /*
+        case MODE_TWO:
+            currentStatus = modeTwo.processResult(result);
+            break;
+*/
+        case MODE_THREE:
+            currentStatus = modeThree.processResult(result);
+            break;
+    }
+
+    return result;
+}
+
+    /**
+     * @return total score as reported by Mode One.
      */
     public int getTotalScore() {
         return modeOne.getTotalScore();
     }
+
     /**
-     * @return the state of the game Play or End
+     * @return the number of wins in Mode Two.
      */
-    public State getState() {
-        return currentState;
+    public int getModeTwoWins() {
+        return modeTwo.getWins();
     }
+
     /**
-     * Starts a new Mode 1 game session. Resets the score, starts the first round via worker and changes state to play
+     * @return the number of wins in Mode Three.
      */
-    public void startGame() {
-        worker.startNewRound();
-        modeOne.resetScore();
-        playGame();
+    public int getModeThreeWins() {
+        return modeThree.getWins();
     }
+
     /**
-     * Processes a single guess for Mode 1
-     * The following logic is applied in order:
-     *  Guess is trimmed and lowercased
-     *  If the guess is not in allowed word status is set to invalid and null is returned.
-     *  The guess is comapred against game word via worker
-     *  If all leters are green status win is set, scores are updated, and new round begins.
-     *  If attempts are 6 and no win
-     *      If last life status game over is set, the session ends, score is saved, lives are reset
-     *      otherwise, status round lost is set, life is deducted, new round begins.
-     *  Otherwise, status continue is set and the round continues.
-     * @param guess the string entered by the player
-     * @return Color array describing the result of the guess, or {@code null} if the guess was invalid.
+     * @return the number of losses in Mode Three.
      */
-    public Worker.Color[] submitGuessModeOne(String guess) {
+    public int getModeThreeLosses() {
+        return modeThree.getLosses();
+    }
 
-        guess = guess.trim().toLowerCase();
-
-        if (!worker.isValidGuess(guess)) {
-            currentStatus = Status.INVALID;
-            return null;
-        }
-
-        Worker.Color[] result = worker.compare(guess);
-
-        // WIN
-        if (worker.allGreen(result)) {
-            currentStatus = Status.WIN;
-            modeOne.runMode();
-            worker.startNewRound();
-        }
-        // ROUND LOST
-        else if (worker.getAttempts() >= 6) {
-            if (modeOne.getLives() <= 1) {
-                currentStatus = Status.GAME_OVER;
-                endMode();
-                perMan.updateModeOneScore(modeOne.getTotalScore());
-                modeOne.resetLives();
-            } 
-            else {
-                currentStatus = Status.ROUND_LOST;
-                modeOne.loseLife();
-                worker.startNewRound();
-            }
-        }else {
-            currentStatus = Status.CONTINUE;
-        }
-            return result;
-        }
     /**
-     * @return current life count as reported by modeOne
+     * @return current life count as reported by Mode One.
      */
     public int getLives() {
         return modeOne.getLives();
     }
+
     /**
-     * @return attempt count as reported by worker
+     * @return attempt count as reported by worker.
      */
     public int getAttempts() {
         return worker.getAttempts();
     }
+
     /**
-     * @return the game word as reported by worker
+     * @return the state of the game Play or End.
+     */
+    public State getState() {
+        return currentState;
+     }
+
+    /**
+     * @return the game word as reported by worker.
      */
     public String debugWord() {
         return worker.getGameWord();
     }
 }
+
+
+

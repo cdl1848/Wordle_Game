@@ -135,7 +135,7 @@ public class GameBoard extends GridPane {
                             }
 
                             // User input is sent to Controller, which returns an array of color enums
-                            Worker.Color[] colors = controller.submitGuessModeOne(userInput);
+                            Worker.Color[] colors = controller.submitGuess(userInput);
                             userInput = "";
 
                             // Check for invalid input

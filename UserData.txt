@@ -1,6 +1,6 @@
-m1_last=370
+m1_last=0
 m3_wins=21
 m2_last=0
-m3_losses=211
+m3_losses=227
 m2_high=0
 m1_high=1300
