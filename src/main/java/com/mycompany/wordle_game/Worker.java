@@ -7,18 +7,23 @@ import java.util.Scanner;
 import java.util.HashSet;
 
 /**
- * Creates the game words, manipulates inputs
- *
+ * Handles game logic for the Wordle game, including word loading,Guess validation, and result comparison.
+ * Loads two words list 
+ *  GuessWordList.txt - pool of possible answer words 
+ *  AllowedWords.txt - set of valid guess submissions. 
  * @author dallas
  */
 public class Worker {
 
     private int attempts = 0;
-    private String gameword;
+    private String gameWord;
     private String[] wordList;
     private HashSet<String> allowedWords = new HashSet<>();
     private final Random rand = new Random();
 
+    /**
+     * Represents the result of comparing a single letter in the users guess against the current game word. 
+     */
     public enum Color {
         Green,
         Yellow,
@@ -26,8 +31,7 @@ public class Worker {
     }
 
     /**
-     * Constructs the Worker Class, contains a call to Load words and Load
-     * allowed words
+     * Constructs a Worker instance and loads both word lists.
      */
     public Worker() {
         loadWordList();
@@ -35,15 +39,14 @@ public class Worker {
     }
 
     /**
-     * Loads the allowed word list from a file into a hashSet called allowed
-     * Words
+     * Loads the list of words that are valid user inputs, Words are trimmed and converted to lowercase. They are then put in a hashset.
+     * Throws a RuntimeExeption if llowedWords.txt is not found.
      */
     private void loadAllowedWords() {
         System.out.println("Loading AllowedWords.txt...");
         InputStream is = Worker.class
                 .getClassLoader()
                 .getResourceAsStream("AllowedWords.txt");
-
         if (is == null) {
             throw new RuntimeException("AllowedWords.txt not found");
         }
@@ -55,68 +58,42 @@ public class Worker {
     }
 
     /**
-     * Loads the Game word list from a file into a Array called WordList, Array
-     * is used so grabbing one at random is done easily
+     * Loads the list of words the game is allowed to use as an answer. 
+     * During loading an arraylist is used for sizing, then converted to an array for random indexing for words. 
+     * Throws a RuntimeExeption if GuessWordList.txt is not found.
      */
     private void loadWordList() {
         InputStream is = Worker.class
                 .getClassLoader()
                 .getResourceAsStream("GuessWordList.txt");
-
         if (is == null) {
             throw new RuntimeException("GuessWordList.txt not found");
         }
-
         ArrayList<String> temp = new ArrayList<>();
         Scanner scanner = new Scanner(is);
 
         while (scanner.hasNextLine()) {
             temp.add(scanner.nextLine().trim());
         }
-
         scanner.close();
-
         // Convert to array
         wordList = temp.toArray(new String[0]);
     }
 
     /**
-     * Takes a random word from wordList using random.nextInt
-     *
-     * @return String GameWord
-     */
-    /*
-    public String UserInput(Scanner input){
-        String guess; 
-        while (true){
-            System.out.print("enter a guess");
-            guess = input.nextLine().toLowerCase();
-            
-            if (allowedWords.contains(guess)){
-                break;
-            }
-            else {
-                System.out.println("Not A word, Try Again");
-            }
-        }
-        return guess;
-    }
-     */
-    /**
-     * Compares the user input to the Game word, If it is correct returns the
-     * enum value Green, if letter is in the word returns enum yellow, if not in
-     * word at all returns enum red
-     *
-     * @param guess
-     * @param gameWord
-     * @return enum Color
+     * Compares a 5 letter guess against current gameWord and returns a Color for each position.
+     * Letters in correct position are marked green.
+     * Letters that appear elsewhere are marked yellow.
+     * All other letters are marked gray.
+     * each call increments attempts by 1.
+     * @param guess the 5-letter word submitted by the player; must be lowercase.
+     * @return Color[5] array where each element reflects the result for the corresponding letter of guess.
      */
     public Color[] compare(String guess) {
-        String word = gameword;
+        String word = gameWord;
         int length = 5;
         Color[] result = new Color[5];
         boolean[] used = new boolean[5];
-
         for (int i = 0; i < 5; i++) {
             if (guess.charAt(i) == word.charAt(i)) {
                 result[i] = Color.Green;
@@ -128,55 +105,50 @@ public class Worker {
             if (result[i] == Color.Green) {
                 continue;
             }
-
             char g = guess.charAt(i);
             boolean found = false;
-
             for (int j = 0; j < length; j++) {
-
                 if (!used[j] && g == word.charAt(j)) {
-
                     found = true;
                     used[j] = true;
                     break;
                 }
             }
-
             result[i] = found ? Color.Yellow : Color.Gray;
         }
-
         attempts++;
-
         return result;
     }
 
     /**
-     * gets the attempts
-     *
-     * @return int attempts
+     * @return the number of attempts made so far this round     
      */
     public int getAttempts() {
         return attempts;
     }
 
     /**
-     * resets values such as attempts and gets a new random word
+     * Begins a new game round by resetting the attempt counter to zero
+     * and selecting a new random answer word from wordList.     
      */
     public void startNewRound() {
         attempts = 0;
-        gameword = wordList[rand.nextInt(wordList.length)];
+        gameWord = wordList[rand.nextInt(wordList.length)];
 
     }
-
+    /** 
+     * 
+     * @return the game word for the current round
+     */
     public String getGameWord() {
-        return gameword;
+        return gameWord;
     }
 
     /**
-     * compares user input to allowedWords to check if word is not gibrish
+     * Checks whether a guess is a recognised word by looking for it in the allowedWords set. 
      *
-     * @param guess
-     * @return boolean
+     * @param guess the word to validate; should be lowercase and 5 letters
+     * @return true if the guess is in the allowedWords list, else it returns false
      */
     public boolean isValidGuess(String guess) {
         if (allowedWords.contains(guess)) {
@@ -184,7 +156,11 @@ public class Worker {
         }
         return false;
     }
-
+    /** 
+     * Determines whether every position in a comparison result is green, indicates weather guess was correct.
+     * @param result a Color array
+     * @return true if all elements are green, false if any element is not green.
+     */
     public boolean allGreen(Color[] result) {
         for (Color c : result) {
             if (c != Color.Green) {
@@ -193,24 +169,4 @@ public class Worker {
         }
         return true;
     }
-
-    /*
-    public void GameRun(Scanner input){
-         String gameWord = getGameWord(); // Run Worker to get random word 
-         System.out.println(gameWord); // TESTER PRINT
-        
-        // Run the game for loop 6 attempts, break is if you win
-        for (int i =0; i<6; i++){
-            String guess = UserInput(input);
-            compare(guess, gameWord);   
-            if (guess.equals(gameWord)){
-                System.out.print("Conrgats you win");
-               break;
-            }
-            System.out.print("you lose");
-        }
-        // Lose / finish signal
-        System.out.println("Game word was: " + gameWord);
-    }
-     */
 }

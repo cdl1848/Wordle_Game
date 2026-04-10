@@ -1,99 +1,164 @@
 package com.mycompany.wordle_game;
-/** 
- * The scoring system and manipulator for mode one, calculates scores, handles lives, and tracks attempts.
+
+/**
+ * Implements the scoring system and game-state logic for Mode 1.
+ * Player starts with 3 lives and loses one each time a word is not guessed within 6 attempts. 
+ * Points are Points are awarded per round based on how quickly a word is guessed. 
+ * then multiplied by a streak multiplier that grows when the player guesses efficiently in consecutive rounds.
  * @author dallas
  */
 public class ModeOne {
+
     private int lives = 3;
-    private int multiply = 1;
-    protected int totalscore = 0;
-    private Worker worker; 
-    private Controller controller;
-/**
- * Makes a pointer for worker and controller when created.
- * @param worker 
- */
-   public ModeOne(Worker worker) {
+    private int multiplier = 1;
+    private int totalScore = 0;
+    private static final int MAX_ATTEMPTS = 6;
+    private final Worker worker;
+    private final Controller controller;
+
+    /**
+     * Constructs a ModeOne with references to
+     * @param worker used to retrieve attempt counts
+     * @param controller used to signal game-state changes
+     */
+    public ModeOne(Worker worker, Controller controller) {
         this.worker = worker;
         this.controller = controller;
     }
-   
-  /** 
-   * Calculates Score for Mode One starting at 100 points for attempt one down to 10 points for attempt 6. Multiplies the scores by the multiplier determined by number of attempts of the last game.
-   * @param attempt
-   * @return int
-   */
+
+    /**
+     * Calculates Score for Mode One starting at 100 points for attempt one down
+     * to 10 points for attempt 6. Multiplies the scores by the multiplier
+     * determined by number of attempts of the last game.
+     *
+     * @param attempt the number of guesses used to solve the word 
+     * @return the points awarded for this round
+     */
     private int calculateScore(int attempt) {
-        switch(attempt) {
-            case 1: return 100 * multiply;
-            case 2: return 90 * multiply;
-            case 3: return 75 * multiply;
-            case 4: return 50 * multiply;
-            case 5: return 25 * multiply;
-            case 6: return 10 * multiply;
-            default: return 0;
+        switch (attempt) {
+            case 1:
+                return 100 * multiplier;
+            case 2:
+                return 90 * multiplier;
+            case 3:
+                return 75 * multiplier;
+            case 4:
+                return 50 * multiplier;
+            case 5:
+                return 25 * multiplier;
+            case 6:
+                return 10 * multiplier;
+            default:
+                return 0;
         }
     }
+
     /**
-     * Updates the Multiplier based on number of attempts, for 1 and 2 the multiplier is 3. 3 and 4 multiplier is 2, anything else multiplier is 1.
-     * @param attempt 
+     * Updates the Multiplier based on number of attempts
+     * 1 and 2 = multiplier 3.
+     * 3 and 4 = multiplier 2
+     * anything else = multiplier 1.
+     *
+     * @param attempt the number of guesses used to solve the word this round
      */
     private void updateMultiplier(int attempt) {
-        switch(attempt) {
+        switch (attempt) {
             case 1:
             case 2:
-                multiply = 3;
+                multiplier = 3;
                 break;
             case 3:
             case 4:
-                multiply = 2;
+                multiplier = 2;
                 break;
             default:
-                multiply = 1;
+                multiplier = 1;
+        }
     }
-} //calculates the multiplier based on attempts
-/**
- * @return totalscore
- */
-public int getTotalScore(){
-        return totalscore;
+
+    /**
+     * @return the total score accumulated across all rounds so far
+     */
+    public int getTotalScore() {
+        return totalScore;
     }
-/**
- * Updates values such as attempt, score, total score, and lives. If lives equals 0 then runs endmode switching the state to END ending the game
- */
-    public void runMode(){
+
+    /**
+     * Processes the outcome of a completed round. In order, this method:
+     * Retrieves the attempt count from worker.
+     * Calculates and adds the round score to totalScore
+     * Updates the multiplier for next round
+     * Deducts a life if the word was not guessed within 6 attempts.
+     * Calls endMode if no lives remain.
+     */
+    public void runMode() {
         int attempt = worker.getAttempts();
         int score = calculateScore(attempt);
-        totalscore += score;
+        totalScore += score;
         updateMultiplier(attempt);
-        if (attempt > 6 ){
-            lives --;
+        if (attempt > MAX_ATTEMPTS) {
+            loseLife();
         }
-        if (lives <= 0){
+        if (lives <= 0) {
             controller.endMode(); // in controler
         }
-        
-    }  //updates stuff in the game
 
-/** 
- * @return lives
- */
-    public int getLives(){
+    }
+
+    /**
+     * @return current life count
+     */
+    public int getLives() {
         return lives;
     }
+
     /**
-     * Updates lives for modeone, removes one life. 
+     * Deducts one life from the player's remaining lives.
      */
     public void loseLife() {
         lives--;
     }
-    /** 
-     * resets lives back to 3 for modeone 
+
+    /**
+     * Resets the player's life count back to the starting value of 3 
      */
     public void resetLives() {
         lives = 3;
     }
-    public void resetscore(){
-      totalscore = 0;
+
+    /**
+     * Resets the player's total score back to 0
+     */
+    public void resetScore() {
+        totalScore = 0;
     }
+    /**
+ * Processes the result of a completed guess and updates score, lives,
+ * and round progression for Mode One.
+ *
+ * @param result the Color array returned by worker for the most recent guess.
+ * @return the resulting game status for the round.
+ */
+public Controller.Status processResult(Worker.Color[] result) {
+
+    if (worker.allGreen(result)) {
+        runMode();
+        worker.startNewRound();
+        return Controller.Status.WIN;
+    }
+
+    if (worker.getAttempts() >= MAX_ATTEMPTS) {
+        if (lives <= 1) {
+            controller.endMode();
+            return Controller.Status.GAME_OVER;
+        } else {
+            loseLife();
+            worker.startNewRound();
+            return Controller.Status.ROUND_LOST;
+        }
+    }
+
+    return Controller.Status.CONTINUE;
+}
+
 }
