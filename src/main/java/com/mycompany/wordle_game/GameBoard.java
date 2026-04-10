@@ -28,6 +28,9 @@ public class GameBoard extends GridPane {
     // Stores a hex value for different colors
     private String color;
 
+    // Callback to refresh the score display in GameScreen
+    private Runnable refreshScore;
+
     /**
      * Helper method that moves right of current field when letter is entered
      *
@@ -53,7 +56,22 @@ public class GameBoard extends GridPane {
         }
     }
 
-    public GameBoard(Controller controller) {
+    private void resetBoard() {
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 5; col++) {
+                grid[row][col].clear();
+                grid[row][col].setDisable(true);
+                grid[row][col].setStyle("-fx-alignment: center; -fx-font-size: 18");
+            }
+        }
+
+        grid[0][0].setDisable(false);
+        grid[0][0].requestFocus();
+    }
+
+    public GameBoard(Controller controller, Runnable refreshScore) {
+        this.refreshScore = refreshScore;
+
         // Set spacing between grids
         setHgap(5);
         setVgap(5);
@@ -122,10 +140,13 @@ public class GameBoard extends GridPane {
 
                             // Check for invalid input
                             if (colors != null) {
+                                // Refresh score label after backend processes valid guess
+                                refreshScore.run();
+
                                 for (int i = 0; i <= currentCol; i++) {
                                     // Disable the text fields in the row
                                     grid[currentRow][i].setDisable(true);
-                                    
+
                                     // Set CSS color based on enum value
                                     switch (colors[i]) {
                                         case Green:
@@ -147,25 +168,36 @@ public class GameBoard extends GridPane {
 
                                 // Get status of Controller after user input is submitted
                                 Controller.Status status = controller.currentStatus;
-                                
+
                                 // Used for debugging
                                 System.out.println("Status: " + status);
 
                                 // Update GameBoard base on Controller status
                                 switch (status) {
                                     case WIN:
-                                        System.out.println("You win!"); // Will change to a popup
+                                        System.out.println("You win!");
+                                        resetBoard();
+                                        System.out.println(controller.debugWord());
                                         break;
-                                        
+
                                     case ROUND_LOST:
                                         System.out.println("Round Lost!");
+                                        resetBoard();
+                                        System.out.println(controller.debugWord());
                                         break;
-                                        
+
                                     case CONTINUE:
                                         // Enable the next row
                                         if (currentRow < 5) {
                                             grid[currentRow + 1][0].setDisable(false);
                                         }
+                                        break;
+
+                                    case GAME_OVER:
+                                        System.out.println("Game Over!");
+                                        break;
+
+                                    case INVALID:
                                         break;
                                 }
                             } else {
