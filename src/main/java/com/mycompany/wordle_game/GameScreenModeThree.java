@@ -16,48 +16,48 @@ import javafx.stage.Stage;
  *
  * @author garrett
  */
-public class GameScreen {
+public class GameScreenModeThree{
 
     private Controller controller;
-    private Label scoreLabel;
-    private Label livesLabel;
+    private Label winsLabel;
+    private Label lossesLabel;
 
     public void show(Stage stage) {
         controller = new Controller();
-        controller.startModeOne();
+        controller.startModeThree();
 
         // Used for debugging purposes
         System.out.println(controller.debugWord());
 
-        scoreLabel = new Label("Score: " + controller.getTotalScore());
-        scoreLabel.setTextFill(Color.WHITE);
-        livesLabel = new Label("Lives: " + controller.getLives());
-        livesLabel.setTextFill(Color.WHITE);
+        winsLabel = new Label("Wins: " + controller.getModeThreeWins());
+        winsLabel.setTextFill(Color.WHITE);
+        lossesLabel = new Label("Losses: " + controller.getModeThreeLosses());
+        lossesLabel.setTextFill(Color.WHITE);
 
-        VBox topBox = new VBox(10, scoreLabel, livesLabel);
-        topBox.setAlignment(Pos.CENTER);
+        VBox topBox = new VBox(10, winsLabel, lossesLabel);
         topBox.setStyle("-fx-background-color: #5C5857;");
+        topBox.setAlignment(Pos.CENTER);
 
-        GameBoard board = new GameBoard(controller, this::refreshScore);
+        GameBoard board2 = new GameBoard(controller, this::refreshScore);
 
         BorderPane root = new BorderPane();
         root.setTop(topBox);
         root.setStyle("-fx-background-color: #5C5857;");
-        root.setCenter(board);
+        root.setCenter(board2);
 
         Scene scene = new Scene(root, 350, 400);
 
         stage.setScene(scene);
-        stage.setTitle("Word Blitz");
+        stage.setTitle("WordBlitz");
     }
 
     private void refreshScore() {
-        scoreLabel.setText("Score: " + controller.getTotalScore());
+        winsLabel.setText("Wins: " + controller.getModeThreeWins());
 
         if (controller.currentStatus == Controller.Status.GAME_OVER) {
-            livesLabel.setText("Game Over!");
+            lossesLabel.setText("Game Over!");
         } else {
-            livesLabel.setText("Lives: " + controller.getLives());
+            lossesLabel.setText("Losses: " + controller.getModeThreeLosses());
         }
     }
 }
