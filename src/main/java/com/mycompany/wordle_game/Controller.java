@@ -43,7 +43,7 @@ public class Controller {
 
     public State currentState;
     public Status currentStatus;
-    private GameMode currentMode;
+    public GameMode currentMode;
 
     /**
      * Constructs a controller with the game initially in the End State.
@@ -145,6 +145,12 @@ public class Controller {
      */
     public int getTotalScore() {
         return modeOne.getTotalScore();
+    }
+    public int getModeOneHighScore(){
+        return perMan.getModeOneHighScore();
+    }
+    public int getModeOneLastScore(){
+        return perMan.getModeOneLastScore();
     }
 
     /**

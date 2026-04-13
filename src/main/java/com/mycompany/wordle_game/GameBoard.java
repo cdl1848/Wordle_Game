@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
+import javafx.geometry.Pos;
+
 
 /**
  * GameBoard
@@ -164,6 +166,7 @@ public class GameBoard extends GridPane {
         // Set spacing between grids
         setHgap(5);
         setVgap(5);
+        setAlignment(Pos.CENTER);
 
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 5; col++) {
