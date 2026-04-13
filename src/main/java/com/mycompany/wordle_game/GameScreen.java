@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -34,7 +35,9 @@ public class GameScreen {
         System.out.println(controller.debugWord());
 
         scoreLabel = new Label("Score: " + controller.getTotalScore());
+        scoreLabel.setTextFill(Color.WHITE);
         livesLabel = new Label("Lives: " + controller.getLives());
+        livesLabel.setTextFill(Color.WHITE);
 
         // Create image view for return home button
         Image homeImg = new Image(getClass().getResource("/icons/home.png").toExternalForm());
@@ -75,17 +78,19 @@ public class GameScreen {
         // Set top bar width to be less than board for alignment purposes
         topBar.setMaxWidth(250);
 
+        topBar.setStyle("-fx-background-color: #5C5857;");
+
         GameBoard board = new GameBoard(controller, this::refreshScore);
 
         gameContainer.getChildren().addAll(topBar, board);
         
         BorderPane root = new BorderPane();
         root.setCenter(gameContainer);
+        root.setStyle("-fx-background-color: #5C5857;");
 
         Scene scene = new Scene(root, 350, 400);
         stage.setScene(scene);
-        
-        stage.setTitle("Wordle");
+        stage.setTitle("Word Blitz");
     }
 
     private void refreshScore() {

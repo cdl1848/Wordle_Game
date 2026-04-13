@@ -8,6 +8,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
+import javafx.geometry.Pos;
+
 
 /**
  * GameBoard
