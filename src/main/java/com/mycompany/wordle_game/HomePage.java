@@ -24,16 +24,17 @@ public class HomePage extends Application {
         Button playButton = new Button("Play");
         playButton.setPrefSize(120, 40);
 
-        playButton.setOnAction(e -> {
-            GameScreen gameScreen = new GameScreen();
-            gameScreen.show(primaryStage);
-        });
-
         VBox layout = new VBox(30);
         layout.setAlignment(Pos.CENTER);
         layout.getChildren().addAll(title, playButton);
 
         Scene homeScene = new Scene(layout, 350, 400);
+        
+        playButton.setOnAction(e -> {
+            GameScreen gameScreen = new GameScreen();
+            // Pass homeScene to GameScreen so it can return back to the home page
+            gameScreen.show(primaryStage, homeScene);
+        });
 
         primaryStage.setScene(homeScene);
         primaryStage.setTitle("Wordle Home");

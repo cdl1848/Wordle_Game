@@ -3,6 +3,7 @@ package com.mycompany.wordle_game;
 import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
@@ -14,14 +15,16 @@ import javafx.util.Duration;
  * Responsible for managing the grid of text fields which represents the
  * playable word grid (6 rows x 5 columns)
  *
- * Sources used for text formatting: https://stackoverflow.com/a/26670258
+ * Sources used for text formatting: 
+ * https://stackoverflow.com/a/26670258
  * https://stackoverflow.com/a/5238524
  *
  * Sources used for animation:
  * https://www.tutorialspoint.com/javafx/javafx_rotate_transition.htm
  * https://www.javaspring.net/javafx/javafx_sequential_transition_unleashing_the_power_of_animated_interfaces/
  *
- * Color hex values taken from: https://www.color-hex.com/color-palette/1012607
+ * Color hex values taken from: 
+ * https://www.color-hex.com/color-palette/1012607
  *
  * Help with general purpose debugging and refactoring:
  * https://chatgpt.com/c/697d09b0-0438-832a-8cce-d80990487f4d
@@ -40,7 +43,7 @@ public class GameBoard extends GridPane {
     private Runnable refreshScore;
 
     /**
-     * Helper method that moves right of current field when letter is entered
+     * Moves right of current field when letter is entered
      *
      * @param row
      * @param col
@@ -53,7 +56,7 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Helper method that moves left of current field when letter is deleted
+     * Moves left of current field when letter is deleted
      *
      * @param row
      * @param col
@@ -65,8 +68,8 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Helper method that will play tile flipping animation and change
-     * respective color for each tile in the current row
+     * Plays tile flipping animation and changes
+     * color for each tile in the current row based on colors param
      *
      * @param row
      * @param colors
@@ -91,7 +94,7 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Helper method that creates a tile flip animation for each tile in a row
+     * Creates a tile flip animation for each tile in a row
      * and changes its color corresponding to its respective color enum value
      *
      * @param tile
@@ -103,7 +106,7 @@ public class GameBoard extends GridPane {
         // Color will change at the halfway point when the tile is no longer visible
         RotateTransition flip = new RotateTransition();
         flip.setNode(tile);
-        flip.setDuration(Duration.millis(200));
+        flip.setDuration(Duration.millis(150));
         flip.setAxis(new Point3D(1, 0, 0));
         flip.setFromAngle(0);
         flip.setToAngle(90);
@@ -115,7 +118,7 @@ public class GameBoard extends GridPane {
 
         RotateTransition flipBack = new RotateTransition();
         flipBack.setNode(tile);
-        flipBack.setDuration(Duration.millis(200));
+        flipBack.setDuration(Duration.millis(150));
         flipBack.setAxis(new Point3D(1, 0, 0));
         flipBack.setFromAngle(90);
         flipBack.setToAngle(0);
@@ -127,7 +130,7 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Helper method that will return a color hex value given color enum
+     * Returns a color hex value given color enum
      *
      * @param color
      * @return
@@ -164,6 +167,8 @@ public class GameBoard extends GridPane {
         // Set spacing between grids
         setHgap(5);
         setVgap(5);
+        
+        setAlignment(Pos.CENTER);
 
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 5; col++) {
