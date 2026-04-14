@@ -10,8 +10,11 @@ This repository uses a **branch-based workflow** with issues, pull requests, and
 Direct pushes to `master` are restricted.
 
 ---
+## Before cloning the project
+1. Make sure you have netbeans ide installed as well as basic Java dependencies.
+2. Ensure you have access to the Worlde_Game GitHub page to access the clone url
 
-### How to clone the project
+## How to clone the project
 1. Copy the repository URL from Github
 2. Open a terminal
 3. Run: change <> as needed
