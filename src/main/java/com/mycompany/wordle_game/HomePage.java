@@ -38,8 +38,13 @@ public class HomePage extends Application {
         
         Text modeThreeLosses= new Text("Loses: " + controller.getModeThreeLosses());
         modeThreeLosses.setFill(Color.WHITE);
+        // Main layout
+        VBox layout = new VBox(30);
+        layout.setStyle("-fx-background-color: #5C5857;");
+        layout.setAlignment(Pos.CENTER);
         
-         // Mode One Button
+        Scene homeScene = new Scene(layout, 350, 400);
+        // Mode One Button
         Button modeOneButton = new Button("Scored");
         modeOneButton.setPrefSize(120, 40);
         modeOneButton.setStyle("-fx-background-color: #6ca965;");
@@ -47,7 +52,7 @@ public class HomePage extends Application {
             GameScreen gameScreen = new GameScreen();
             primaryStage.setFullScreen(false);
             primaryStage.setResizable(false);
-            gameScreen.show(primaryStage);
+            gameScreen.show(primaryStage,homeScene );
         });
         VBox modeOneBox = new VBox(5);
         modeOneBox.setAlignment(Pos.CENTER);
@@ -62,7 +67,7 @@ public class HomePage extends Application {
         modeTwoButton.setStyle("-fx-background-color: #6ca965;");
         modeTwoButton.setOnAction(e -> {
             GameScreenModeThree modeThreeScreen = new GameScreenModeThree();
-            modeThreeScreen.show(primaryStage);
+            modeThreeScreen.show(primaryStage,homeScene);
         });
         VBox modeTwoBox = new VBox(5);
         modeTwoBox.setAlignment(Pos.CENTER);
@@ -76,15 +81,9 @@ public class HomePage extends Application {
         buttonLayout.setAlignment(Pos.CENTER);
         buttonLayout.getChildren().addAll(modeOneBox, modeTwoBox );
        
-
-        // Main layout
-        VBox layout = new VBox(30);
-        layout.setStyle("-fx-background-color: #5C5857;");
-        layout.setAlignment(Pos.CENTER);
         layout.getChildren().addAll(title, buttonLayout);
-        
 
-        Scene homeScene = new Scene(layout, 350, 400);
+
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(false);
         primaryStage.setScene(homeScene);
