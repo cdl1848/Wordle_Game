@@ -50,9 +50,11 @@ public class Controller {
         /** Endless mode */
         MODE_THREE
     }
-
+    /**variable to store and use the State*/
     public State currentState;
+    /**variable to store and use the Status*/
     public Status currentStatus;
+    /**variable to store and use the Mode*/
     public GameMode currentMode;
 
     /**

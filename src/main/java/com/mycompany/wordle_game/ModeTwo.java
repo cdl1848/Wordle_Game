@@ -28,7 +28,7 @@ public class ModeTwo {
      * Constructs a ModeTwo instance with references to
      * @param worker used to retrieve attempt counts and evaluate guess results
      * @param controller used to signal game-state changes
-     * @param PersistenceManager used to manage Persistence in mode
+     * @param persistencemanager used to manage Persistence in mode
      */
     public ModeTwo(Worker worker, Controller controller, PersistenceManager persistencemanager) {
         this.worker = worker;
