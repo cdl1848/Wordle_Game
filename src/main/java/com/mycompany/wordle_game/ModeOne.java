@@ -77,7 +77,8 @@ public class ModeOne {
     }
 
     /**
-     * @return the total score accumulated across all rounds so far
+     * returns the total score accumulated across all rounds so far 
+     * @return the total score
      */
     public int getTotalScore() {
         return totalScore;
@@ -106,6 +107,7 @@ public class ModeOne {
     }
 
     /**
+     * returns the life count of the current running game
      * @return current life count
      */
     public int getLives() {

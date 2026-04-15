@@ -51,14 +51,16 @@ public class ModeThree {
      */
 
     /**
-     * @return the total number of wins persisted across sessions
+     * returns the total number of wins persisted across sessions
+     * @return the total number of wins
      */
     public int getWins() {
         return perMan.getModeThreeWins();
     }
 
     /**
-     * @return the total number of losses persisted across sessions
+     * returns the total number of losses persisted across sessions
+     * @return the total number of losses
      */
     public int getLosses() {
         return perMan.getModeThreeLosses();

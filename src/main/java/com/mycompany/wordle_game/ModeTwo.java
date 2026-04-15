@@ -28,6 +28,7 @@ public class ModeTwo {
      * Constructs a ModeTwo instance with references to
      * @param worker used to retrieve attempt counts and evaluate guess results
      * @param controller used to signal game-state changes
+     * @param PersistenceManager used to manage Persistence in mode
      */
     public ModeTwo(Worker worker, Controller controller, PersistenceManager persistencemanager) {
         this.worker = worker;
@@ -81,6 +82,7 @@ public class ModeTwo {
     }
 
     /**
+     * Returns the total number of wins for that game in mode 2
      * @return the win count 
      */
     public int getWins() {
@@ -88,7 +90,8 @@ public class ModeTwo {
     }
 
     /**
-     * @return the loss count (not really used currently)
+     * Returns the total number of losses for that game in mode 2
+     * @return the loss count (not used currently)
      */
     public int getLosses() {
         return losses;

@@ -25,8 +25,11 @@ public class Worker {
      * Represents the result of comparing a single letter in the users guess against the current game word. 
      */
     public enum Color {
+        /** The letter is in the correct position. */
         Green,
+         /** The letter is in the word but is not in the correct position. */
         Yellow,
+         /** The letter is not the word. */
         Gray,
     }
 
@@ -121,6 +124,7 @@ public class Worker {
     }
 
     /**
+     * Returns the number of attempts during the round.
      * @return the number of attempts made so far this round     
      */
     public int getAttempts() {
@@ -137,7 +141,7 @@ public class Worker {
 
     }
     /** 
-     * 
+     * returns the Game word chosen at random during startNewRound()
      * @return the game word for the current round
      */
     public String getGameWord() {
