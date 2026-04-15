@@ -17,7 +17,9 @@ public class Controller {
      * Represents the high-level session state of the game.
      */
     public enum State {
+        /** Game is being played in any mode */
         Play,
+        /** Game is not being ran in any mode (home screen)*/
         End
     }
 
@@ -25,10 +27,15 @@ public class Controller {
      * Represents the outcome of the most recently submitted guess.
      */
     public enum Status {
+        /** invalid word entered*/
         INVALID,
+        /** Game running as normal */
         CONTINUE,
+        /** Round Won */
         WIN,
+        /** Round Lost */
         ROUND_LOST,
+        /** Game over due to lack of lives or timed out */
         GAME_OVER
     }
 
@@ -36,13 +43,18 @@ public class Controller {
      * Represents the currently active game mode.
      */
     public enum GameMode {
+        /** Scored mode with lives*/
         MODE_ONE,
+        /** Timed mode */
         MODE_TWO,
+        /** Endless mode */
         MODE_THREE
     }
-
+    /**variable to store and use the State*/
     public State currentState;
+    /**variable to store and use the Status*/
     public Status currentStatus;
+    /**variable to store and use the Mode*/
     public GameMode currentMode;
 
     /**
@@ -141,54 +153,69 @@ public class Controller {
 }
 
     /**
-     * @return total score as reported by Mode One.
+     * returns the total score reported by Mode one
+     * @return total score
      */
     public int getTotalScore() {
         return modeOne.getTotalScore();
     }
+    /**
+     * returns the High score reported by Mode one
+     * @return High score
+     */
     public int getModeOneHighScore(){
         return perMan.getModeOneHighScore();
     }
+    /**
+     * returns the Last game score reported by Mode one
+     * @return Last game's score
+     */
     public int getModeOneLastScore(){
         return perMan.getModeOneLastScore();
     }
 
     /**
-     * @return the number of wins in Mode Two.
+     * returns the number of wins as reported in mode two
+     * @return the number of wins
      */
     public int getModeTwoWins() {
         return modeTwo.getWins();
     }
 
-    /**
-     * @return the number of wins in Mode Three.
+   /**
+     * returns the number of wins as reported in mode three
+     * @return the number of wins
      */
     public int getModeThreeWins() {
         return modeThree.getWins();
     }
 
     /**
-     * @return the number of losses in Mode Three.
+     * returns the number of losses as reported in mode three
+     * @return the number of losses
      */
     public int getModeThreeLosses() {
         return modeThree.getLosses();
     }
 
     /**
-     * @return current life count as reported by Mode One.
+     * returns the number of lives as reported in mode one
+     * @return the number of lives
      */
     public int getLives() {
         return modeOne.getLives();
     }
 
     /**
-     * @return attempt count as reported by worker.
+     * attempt count as reported by worker.
+     * @return attempt count
      */
     public int getAttempts() {
         return worker.getAttempts();
     }
 
     /**
+     * returns the state of the game depending on if a game is running or not
      * @return the state of the game Play or End.
      */
     public State getState() {
@@ -196,7 +223,8 @@ public class Controller {
      }
 
     /**
-     * @return the game word as reported by worker.
+     * returns the game word as reported by worker.
+     * @return the game word
      */
     public String debugWord() {
         return worker.getGameWord();

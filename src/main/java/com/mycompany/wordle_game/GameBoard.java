@@ -31,6 +31,7 @@ import javafx.geometry.Pos;
  * @author garrett
  */
 public class GameBoard extends GridPane {
+    
 
     // 6x5 2D array of text field objects used to move between fields
     private TextField[][] grid = new TextField[6][5];
@@ -163,7 +164,7 @@ public class GameBoard extends GridPane {
         grid[0][0].setDisable(false);
         grid[0][0].requestFocus();
     }
-
+private boolean isProcessingGuess = false;
     public GameBoard(Controller controller, Runnable refreshScore) {
         this.refreshScore = refreshScore;
 
@@ -227,6 +228,11 @@ public class GameBoard extends GridPane {
                     // Process the user input if enter is pressed at the last column in a row
                     if (currentCol == 4) {
                         if (event.getCode() == KeyCode.ENTER) {
+                            if (isProcessingGuess) {
+                                return;
+                            }
+
+                            isProcessingGuess = true;
                             for (int i = 0; i <= currentCol; i++) {
                                 userInput += grid[currentRow][i].getText();
                             }
@@ -269,11 +275,16 @@ public class GameBoard extends GridPane {
                                             break;
 
                                         case INVALID:
+                                            isProcessingGuess = false;
                                             break;
                                     }
+                                    isProcessingGuess = false;
                                 });
 
                                 rowAnimation.play();
+                            } else {
+                                System.out.println("Invalid guess");
+                                isProcessingGuess = false;
                             }
                         }
                     }

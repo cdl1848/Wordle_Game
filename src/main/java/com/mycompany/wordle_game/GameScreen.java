@@ -11,6 +11,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.Cursor;
+
 
 /**
  * GameScreen
@@ -26,9 +28,11 @@ public class GameScreen {
     private Label scoreLabel;
     private Label livesLabel;
     private Button returnHome;
+    public GameScreen(Controller controller) {
+        this.controller = controller;
+    }
 
-    public void show(Stage stage, Scene homeScene) {
-        controller = new Controller();
+    public void show(Stage stage, Scene homeScene, Runnable refreshCallback) {
         controller.startModeOne();
 
         scoreLabel = new Label("Score: " + controller.getTotalScore());
@@ -48,12 +52,14 @@ public class GameScreen {
 
         returnHome = new Button();
         returnHome.setGraphic(homeImgView);
+        returnHome.setCursor(Cursor.HAND) ;
 
         // Remove padding
         returnHome.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
         returnHome.setOnAction(event -> {
             stage.setScene(homeScene);
+            refreshCallback.run();
         });
 
         VBox gameContainer = new VBox(10);
