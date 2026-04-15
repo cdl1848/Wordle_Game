@@ -14,11 +14,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.FontPosture;
+import javafx.scene.Cursor;
 
 public class HomePage extends Application {
 
     private Controller controller;
+    private Text highScoreModeOne;
+    private Text lastScoreModeOne;
+    private Text modeThreeWins;
+    private Text modeThreeLosses;
     
     public void start(Stage primaryStage) {
         controller = new Controller();
@@ -27,42 +31,55 @@ public class HomePage extends Application {
         Text title = new Text("Word Blitz");
         title.setFill(Color.WHITE);
         title.setFont(Font.font("Tahoma", FontWeight.BOLD, 50));
-        Text HishScoreModeOne = new Text("High Score: " + controller.getModeOneHighScore());
-        HishScoreModeOne.setFill(Color.WHITE);
         
-        Text LastScoreModeOne= new Text("Last Score: " + controller.getModeOneLastScore());
-        LastScoreModeOne.setFill(Color.WHITE);
-        
-        Text modeThreeWins = new Text("Wins: " + controller.getModeThreeWins());
+        highScoreModeOne = new Text();
+        highScoreModeOne.setFill(Color.WHITE);
+
+        lastScoreModeOne = new Text();
+        lastScoreModeOne.setFill(Color.WHITE);
+
+        modeThreeWins = new Text();
         modeThreeWins.setFill(Color.WHITE);
-        
-        Text modeThreeLosses= new Text("Loses: " + controller.getModeThreeLosses());
+
+        modeThreeLosses = new Text();
         modeThreeLosses.setFill(Color.WHITE);
         
-         // Mode One Button
+        // Main layout
+        VBox layout = new VBox(30);
+        layout.setStyle("-fx-background-color: #5C5857;");
+        layout.setAlignment(Pos.CENTER);
+        Scene homeScene = new Scene(layout, 350, 400);
+        homeScene.windowProperty().addListener((obs, oldWindow, newWindow) -> {
+            if (newWindow != null) {
+                newWindow.setOnShown(event -> refreshScores());
+            }
+        });
+        // Mode One Button
         Button modeOneButton = new Button("Scored");
         modeOneButton.setPrefSize(120, 40);
         modeOneButton.setStyle("-fx-background-color: #6ca965;");
+        modeOneButton.setCursor(Cursor.HAND) ;
         modeOneButton.setOnAction(e -> {
-            GameScreen gameScreen = new GameScreen();
+            GameScreen gameScreen = new GameScreen(controller);
             primaryStage.setFullScreen(false);
             primaryStage.setResizable(false);
-            gameScreen.show(primaryStage);
+            gameScreen.show(primaryStage,homeScene,this::refreshScores );
         });
         VBox modeOneBox = new VBox(5);
         modeOneBox.setAlignment(Pos.CENTER);
         modeOneBox.getChildren().addAll(
                 modeOneButton,
-                HishScoreModeOne,
-                LastScoreModeOne);
+                highScoreModeOne,
+                lastScoreModeOne);
 
         // Mode Two Button
         Button modeTwoButton = new Button("Infinite");
         modeTwoButton.setPrefSize(120, 40);
         modeTwoButton.setStyle("-fx-background-color: #6ca965;");
+        modeTwoButton.setCursor(Cursor.HAND) ;
         modeTwoButton.setOnAction(e -> {
-            GameScreenModeThree modeThreeScreen = new GameScreenModeThree();
-            modeThreeScreen.show(primaryStage);
+            GameScreenModeThree modeThreeScreen = new GameScreenModeThree(controller);
+            modeThreeScreen.show(primaryStage, homeScene, this::refreshScores);
         });
         VBox modeTwoBox = new VBox(5);
         modeTwoBox.setAlignment(Pos.CENTER);
@@ -76,19 +93,21 @@ public class HomePage extends Application {
         buttonLayout.setAlignment(Pos.CENTER);
         buttonLayout.getChildren().addAll(modeOneBox, modeTwoBox );
        
-
-        // Main layout
-        VBox layout = new VBox(30);
-        layout.setStyle("-fx-background-color: #5C5857;");
-        layout.setAlignment(Pos.CENTER);
         layout.getChildren().addAll(title, buttonLayout);
-        
+        refreshScores();
 
-        Scene homeScene = new Scene(layout, 350, 400);
+
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(false);
         primaryStage.setScene(homeScene);
         primaryStage.setTitle("Word Blitz Home");
         primaryStage.show();
     }
+    
+    private void refreshScores() {
+    highScoreModeOne.setText("High Score: " + controller.getModeOneHighScore());
+    lastScoreModeOne.setText("Last Score: " + controller.getModeOneLastScore());
+    modeThreeWins.setText("Wins: " + controller.getModeThreeWins());
+    modeThreeLosses.setText("Losses: " + controller.getModeThreeLosses());
+}
 }
