@@ -35,9 +35,6 @@ public class GameScreen {
     public void show(Stage stage, Scene homeScene, Runnable refreshCallback) {
         controller.startModeOne();
 
-        // Used for debugging purposes
-        System.out.println(controller.debugWord());
-
         scoreLabel = new Label("Score: " + controller.getTotalScore());
         scoreLabel.setTextFill(Color.WHITE);
         livesLabel = new Label("Lives: " + controller.getLives());
@@ -107,5 +104,8 @@ public class GameScreen {
         } else {
             livesLabel.setText("Lives: " + controller.getLives());
         }
+        
+        // Used for debugging purposes
+        System.out.println(controller.debugWord());
     }
 }
