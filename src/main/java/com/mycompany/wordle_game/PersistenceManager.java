@@ -97,7 +97,7 @@ public class PersistenceManager {
      * @return the Mode 1 high score
      */
     public int getModeOneHighScore() {
-        return data.getOrDefault("m1_high", 0);
+        return data.get("m1_high");
     }
 
     /**

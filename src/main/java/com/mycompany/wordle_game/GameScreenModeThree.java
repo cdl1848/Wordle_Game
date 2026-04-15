@@ -11,6 +11,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.Cursor;
+
 
 /**
  * GameScreen
@@ -26,9 +28,11 @@ public class GameScreenModeThree {
     private Label scoreLabel;
     private Label lossesLabel;
     private Button returnHome;
+    public GameScreenModeThree(Controller controller) {
+        this.controller = controller;
+    }
 
-    public void show(Stage stage, Scene homeScene) {
-        controller = new Controller();
+    public void show(Stage stage, Scene homeScene, Runnable refreshCallback) {
         controller.startModeThree();
 
         // Used for debugging purposes
@@ -51,12 +55,15 @@ public class GameScreenModeThree {
 
         returnHome = new Button();
         returnHome.setGraphic(homeImgView);
+        returnHome.setCursor(Cursor.HAND) ;
+
 
         // Remove padding
         returnHome.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
         returnHome.setOnAction(event -> {
-            stage.setScene(homeScene);
+        refreshCallback.run();  // Refresh the HomePage scores
+        stage.setScene(homeScene);
         });
 
         VBox gameContainer = new VBox(10);
