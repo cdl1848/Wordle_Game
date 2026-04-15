@@ -2,14 +2,13 @@ package com.mycompany.wordle_game;
 
 import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
+import javafx.application.Platform;
 import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 import javafx.geometry.Pos;
-
 
 /**
  * GameBoard
@@ -17,16 +16,14 @@ import javafx.geometry.Pos;
  * Responsible for managing the grid of text fields which represents the
  * playable word grid (6 rows x 5 columns)
  *
- * Sources used for text formatting: 
- * https://stackoverflow.com/a/26670258
+ * Sources used for text formatting: https://stackoverflow.com/a/26670258
  * https://stackoverflow.com/a/5238524
  *
  * Sources used for animation:
  * https://www.tutorialspoint.com/javafx/javafx_rotate_transition.htm
  * https://www.javaspring.net/javafx/javafx_sequential_transition_unleashing_the_power_of_animated_interfaces/
  *
- * Color hex values taken from: 
- * https://www.color-hex.com/color-palette/1012607
+ * Color hex values taken from: https://www.color-hex.com/color-palette/1012607
  *
  * Help with general purpose debugging and refactoring:
  * https://chatgpt.com/c/697d09b0-0438-832a-8cce-d80990487f4d
@@ -70,8 +67,8 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Plays tile flipping animation and changes
-     * color for each tile in the current row based on colors param
+     * Plays tile flipping animation and changes color for each tile in the
+     * current row based on colors parameter
      *
      * @param row
      * @param colors
@@ -96,8 +93,8 @@ public class GameBoard extends GridPane {
     }
 
     /**
-     * Creates a tile flip animation for each tile in a row
-     * and changes its color corresponding to its respective color enum value
+     * Creates a tile flip animation for each tile in a row and changes its
+     * color corresponding to its respective color enumerated value
      *
      * @param tile
      * @param colorEnum
@@ -150,6 +147,10 @@ public class GameBoard extends GridPane {
         }
     }
 
+    /**
+     * Clears the board by removing each letter in the grid and sets focus back
+     * to first text field
+     */
     private void resetBoard() {
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 5; col++) {
@@ -169,7 +170,7 @@ public class GameBoard extends GridPane {
         // Set spacing between grids
         setHgap(5);
         setVgap(5);
-        
+
         setAlignment(Pos.CENTER);
 
         for (int row = 0; row < 6; row++) {
@@ -242,25 +243,19 @@ public class GameBoard extends GridPane {
                                     // Refresh score label after backend processes valid guess
                                     refreshScore.run();
 
-                                    // NEED TO CHANGE STATUS HANDLING
                                     // Get status of Controller after user input is submitted
                                     Controller.Status status = controller.currentStatus;
 
                                     // Used for debugging
-                                    System.out.println("Status: " + status);
-
+                                    // System.out.println("Status: " + status);
                                     // Update GameBoard base on Controller status
                                     switch (status) {
                                         case WIN:
-                                            System.out.println("You win!");
                                             resetBoard();
-                                            System.out.println(controller.debugWord());
                                             break;
 
                                         case ROUND_LOST:
-                                            System.out.println("Round Lost!");
                                             resetBoard();
-                                            System.out.println(controller.debugWord());
                                             break;
 
                                         case CONTINUE:
@@ -271,23 +266,20 @@ public class GameBoard extends GridPane {
                                             break;
 
                                         case GAME_OVER:
-                                            System.out.println("Game Over!");
                                             break;
 
                                         case INVALID:
                                             break;
                                     }
                                 });
-                                
+
                                 rowAnimation.play();
-                            } else {
-                                System.out.println("Invalid guess");
                             }
                         }
                     }
                 });
 
-                // Stores in memory
+                // Stores in memory so the text field can be modified
                 grid[row][col] = textField;
 
                 // Adds to FX GridPane to appear on screen
@@ -295,9 +287,13 @@ public class GameBoard extends GridPane {
             }
         }
 
-        // Once a letter is entered into the text field, the subsequent field
+        // Once a letter is entered into the text field, the next field
         // in the current row will be enabled
         grid[0][0].setDisable(false);
+
+        Platform.runLater(() -> {
+            grid[0][0].requestFocus();
+        });
     }
 
     public TextField[][] getGrid() {
