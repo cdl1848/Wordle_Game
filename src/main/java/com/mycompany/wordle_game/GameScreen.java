@@ -28,10 +28,24 @@ public class GameScreen {
     private Label scoreLabel;
     private Label livesLabel;
     private Button returnHome;
+    
+    /**
+     * Constructs a GameScreen with a reference to the central controller
+     * @param controller used to retrieve game state, scores, and process game logic
+     */
     public GameScreen(Controller controller) {
         this.controller = controller;
     }
-
+    /**
+     * Builds and displays the main game scene on the provided stage.
+     * 
+     * Initializes Mode One, creates UI components (score, lives, board, and navigation),
+     * and connects UI updates to the controller state.
+     *
+     * @param stage the primary stage where the game scene will be displayed
+     * @param homeScene the scene to return to when the home button is pressed
+     * @param refreshCallback callback executed when returning home to refresh external UI state
+     */
     public void show(Stage stage, Scene homeScene, Runnable refreshCallback) {
         controller.startModeOne();
 
@@ -98,7 +112,15 @@ public class GameScreen {
         stage.setScene(scene);
         stage.setTitle("Word Blitz");
     }
-
+    /**
+     * Refreshes the score and lives labels based on the current controller state.
+     * 
+     * Updates:
+     *  - Score label using Mode One total score
+     *  - Lives label or displays "Game Over!" if the session has ended
+     * 
+     * Also prints the current game word to console for debugging purposes.
+     */
     private void refreshScore() {
         scoreLabel.setText("Score: " + controller.getTotalScore());
 
@@ -112,3 +134,5 @@ public class GameScreen {
         System.out.println(controller.debugWord());
     }
 }
+
+
