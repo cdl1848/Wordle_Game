@@ -178,7 +178,14 @@ public class GameBoard extends GridPane {
         grid[0][0].setDisable(false);
         grid[0][0].requestFocus();
     }
-
+    /**
+     * Constructs a GameBoard instance and makes the 6x5 grid of text fields.
+     * Sets up input handling, movement between fields, and submission logic.
+     * each completed guess is sent to the controller for evaluatio.
+     * A call back is used to refresh the score display.
+     * @param controller used to process guesses and retrieve states
+     * @param refreshScore callback used to update score display
+     */
     public GameBoard(Controller controller, Runnable refreshScore) {
         this.refreshScore = refreshScore;
 
@@ -325,8 +332,14 @@ public class GameBoard extends GridPane {
             grid[0][0].requestFocus();
         });
     }
-
+    /**
+     * Stores the current grid of text fields representing the game board.
+     *
+     * @return a 2D array of TextField objects representing the board state
+     */
     public TextField[][] getGrid() {
         return grid;
     }
 }
+
+

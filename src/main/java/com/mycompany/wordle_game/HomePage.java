@@ -16,6 +16,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.Cursor;
 
+    /**
+     * HomePage
+     *
+     * Entry point for the JavaFX application and main menu for the game.
+     *   
+     * Displays available game modes and persistent player statistics.
+     * Provides navigation to the different game screens and refreshes displayed scores when returning from gameplay.
+     * 
+     * Acts as the top-level UI container and initializes the Controller
+     *
+     * @author garrett
+     */
 public class HomePage extends Application {
 
     private Controller controller;
@@ -24,6 +36,12 @@ public class HomePage extends Application {
     private Text modeThreeWins;
     private Text modeThreeLosses;
     
+    /**
+     * Builds the home screen UI using JavaFX
+     * 
+     * Initializes the controller, creates buttons, and displays scores. 
+     * @param primaryStage the main stage for the aplication
+     */
     public void start(Stage primaryStage) {
         controller = new Controller();
 
@@ -103,7 +121,15 @@ public class HomePage extends Application {
         primaryStage.setTitle("Word Blitz Home");
         primaryStage.show();
     }
-    
+    /**
+      * Refreshes all displayed statistics on the home screen.
+     * 
+     * Updates:
+     *  - Mode One high score and last score
+     *  - Mode Three total wins and losses
+     * 
+     * Values are retrieved from the controller, which delegates to persistence.
+     */
     private void refreshScores() {
     highScoreModeOne.setText("High Score: " + controller.getModeOneHighScore());
     lastScoreModeOne.setText("Last Score: " + controller.getModeOneLastScore());
@@ -111,3 +137,5 @@ public class HomePage extends Application {
     modeThreeLosses.setText("Losses: " + controller.getModeThreeLosses());
 }
 }
+
+

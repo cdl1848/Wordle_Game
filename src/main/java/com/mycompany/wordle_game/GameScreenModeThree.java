@@ -30,10 +30,24 @@ public class GameScreenModeThree {
     private Label scoreLabel;
     private Label lossesLabel;
     private Button returnHome;
+    
+    /**
+     * Constructs a GameScreenModeThree with a reference to the central controller
+     * @param controller used to retrieve game state, scores, and process game logic
+     */
     public GameScreenModeThree(Controller controller) {
         this.controller = controller;
     }
-
+    /**
+     * Builds and displays the main game scene on the provided stage.
+     * 
+     * Initializes Mode One, creates UI components (score, lives, board, and navigation),
+     * and connects UI updates to the controller state.
+     *
+     * @param stage the primary stage where the game scene will be displayed
+     * @param homeScene the scene to return to when the home button is pressed
+     * @param refreshCallback callback executed when returning home to refresh external UI state
+     */
     public void show(Stage stage, Scene homeScene, Runnable refreshCallback) {
         controller.startModeThree();
 
@@ -104,7 +118,14 @@ public class GameScreenModeThree {
         stage.setScene(scene);
         stage.setTitle("Word Blitz");
     }
-
+    /**
+     * Refreshes all displayed statistics on the home screen.
+     * 
+     * Updates:
+     *  - Mode Three total wins and losses
+     * 
+     * Values are retrieved from the controller, which delegates to persistence.
+     */
     private void refreshWins () {
         scoreLabel.setText("Wins : " + controller.getModeThreeWins ());
 
@@ -118,3 +139,5 @@ public class GameScreenModeThree {
         System.out.println(controller.debugWord());
     }
 }
+
+
