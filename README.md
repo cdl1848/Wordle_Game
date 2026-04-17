@@ -4,6 +4,11 @@ A Wordle-style game developed collaboratively as a team project.
 
 ---
 
+## For teacher to play Worlde Blitz
+1. Download the .jar file we submit
+2. double click the "WordleBlitz" jar file
+3. You should see the game UI pop up and receive UserData.txt in the file location 
+
 ## Repository Overview
 This repository uses a **branch-based workflow** with issues, pull requests, and code reviews.
 
