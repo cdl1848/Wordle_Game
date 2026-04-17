@@ -1,4 +1,4 @@
-# Wordle Game
+# Word Blitz
 
 A Wordle-style game developed collaboratively as a team project.
 
