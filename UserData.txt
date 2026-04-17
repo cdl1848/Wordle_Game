@@ -1,5 +1,5 @@
 m1_last=100
-m3_wins=6
+m3_wins=7
 m2_last=0
 m3_losses=16
 m2_high=0
