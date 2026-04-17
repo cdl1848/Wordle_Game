@@ -16,14 +16,16 @@ import javafx.geometry.Pos;
  * Responsible for managing the grid of text fields which represents the
  * playable word grid (6 rows x 5 columns)
  *
- * Sources used for text formatting: https://stackoverflow.com/a/26670258
+ * Sources used for text formatting: 
+ * https://stackoverflow.com/a/26670258
  * https://stackoverflow.com/a/5238524
  *
  * Sources used for animation:
  * https://www.tutorialspoint.com/javafx/javafx_rotate_transition.htm
  * https://www.javaspring.net/javafx/javafx_sequential_transition_unleashing_the_power_of_animated_interfaces/
  *
- * Color hex values taken from: https://www.color-hex.com/color-palette/1012607
+ * Color hex values taken from: 
+ * https://www.color-hex.com/color-palette/1012607
  *
  * Help with general purpose debugging and refactoring:
  * https://chatgpt.com/c/697d09b0-0438-832a-8cce-d80990487f4d
@@ -31,7 +33,6 @@ import javafx.geometry.Pos;
  * @author garrett
  */
 public class GameBoard extends GridPane {
-    
 
     // 6x5 2D array of text field objects used to move between fields
     private TextField[][] grid = new TextField[6][5];
@@ -41,6 +42,9 @@ public class GameBoard extends GridPane {
 
     // Callback to refresh the score display in GameScreen
     private Runnable refreshScore;
+
+    // Used to prevent repeated enter key press
+    private boolean isProcessingGuess = false;
 
     /**
      * Moves right of current field when letter is entered
@@ -113,7 +117,12 @@ public class GameBoard extends GridPane {
 
         // Apply color at halfway point
         flip.setOnFinished(event -> {
-            tile.setStyle("-fx-background-color: " + getColorHex(colorEnum) + "; -fx-text-fill: #ffffff");
+            tile.setStyle("-fx-background-color: " + getColorHex(colorEnum) + ";"
+                    + "-fx-text-fill: #ffffff;"
+                    + "-fx-alignment: center;"
+                    + "-fx-font-size: 20px;"
+                    + "-fx-font-weight: bold;"
+            );
         });
 
         RotateTransition flipBack = new RotateTransition();
@@ -156,15 +165,20 @@ public class GameBoard extends GridPane {
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 5; col++) {
                 grid[row][col].clear();
-                grid[row][col].setStyle("-fx-background-color: #ffffff; -fx-text-fill: #000000");
-                grid[row][col].setStyle("-fx-alignment: center; -fx-font-size: 18");
+                grid[row][col].setStyle(
+                        "-fx-background-color: #ffffff;"
+                        + "-fx-text-fill: #000000;"
+                        + "-fx-alignment: center;"
+                        + "-fx-font-size: 20px;"
+                        + "-fx-font-weight: bold;"
+                );
             }
         }
 
         grid[0][0].setDisable(false);
         grid[0][0].requestFocus();
     }
-private boolean isProcessingGuess = false;
+
     public GameBoard(Controller controller, Runnable refreshScore) {
         this.refreshScore = refreshScore;
 
@@ -183,8 +197,13 @@ private boolean isProcessingGuess = false;
                 textField.setMinSize(50, 50);
                 textField.setMaxSize(50, 50);
 
-                // Center text and set font for each text field
-                textField.setStyle("-fx-alignment: center; -fx-font-size: 18");
+                textField.setStyle(
+                        "-fx-background-color: #ffffff;"
+                        + "-fx-text-fill: #000000;"
+                        + "-fx-alignment: center;"
+                        + "-fx-font-size: 20px;"
+                        + "-fx-font-weight: bold;"
+                );
 
                 // Variables used for listener to move forward and backward
                 final int currentRow = row;

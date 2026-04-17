@@ -92,6 +92,9 @@ public class GameScreen {
         root.setStyle("-fx-background-color: #5C5857;");
 
         Scene scene = new Scene(root, 350, 400);
+        // Sets opacity for disabled text fields to normal
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        
         stage.setScene(scene);
         stage.setTitle("Word Blitz");
     }
