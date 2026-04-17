@@ -4,7 +4,7 @@ A Wordle-style game developed collaboratively as a team project.
 
 ---
 
-## For teacher to play Worlde Blitz
+## For teacher to play Word Blitz
 1. Download the .jar file we submit
 2. double click the "WordBlitz" jar file
 3. You should see the game UI pop up and receive UserData.txt in the file location 
